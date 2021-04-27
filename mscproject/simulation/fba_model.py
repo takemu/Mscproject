@@ -1,3 +1,4 @@
+import json
 import multiprocessing
 import os
 import time
@@ -25,7 +26,9 @@ class FBAModel:
             self.conditions = conditions
         self.sampling_n = sampling_n
         self.p_fba = p_fba
+        self._print_info()
         print(f"Build FBA model for {time.time() - start_time:.2f} seconds!")
+        self.model.solver.problem.write('fba.lp')
 
     def solve(self):
         print('<< Condition: Control >>')
@@ -72,8 +75,13 @@ class FBAModel:
         except KeyError:
             print("There is no reaction " + reaction_id + '!')
 
+    def _print_info(self):
+        print("num constraints", len(self.model.constraints))
+        print("num variables", len(self.model.variables))
+        print("num metabolites", len(self.model.metabolites))
+        print("num reactions", len(self.model.reactions))
+
 
 if __name__ == '__main__':
     fba_model = FBAModel()
     res = fba_model.solve()
-    res.to_csv('../../output/fba_fluxes.csv')

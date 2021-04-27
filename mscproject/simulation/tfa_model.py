@@ -23,4 +23,3 @@ class TFAModel(FBAModel):
 if __name__ == '__main__':
     tfa_model = TFAModel()
     solution = tfa_model.solve()
-    solution.to_csv('../../output/tfa_fluxes.csv')

@@ -134,4 +134,3 @@ class ETFLModel(FBAModel):
 if __name__ == '__main__':
     etfl_model = ETFLModel()
     solution = etfl_model.solve()
-    solution.to_csv('../../output/etfl_fluxes.csv')

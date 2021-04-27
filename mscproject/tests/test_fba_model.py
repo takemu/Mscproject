@@ -12,7 +12,8 @@ class MyTestCase(unittest.TestCase):
 
     def test_multiple_conditions(self):
         fba_model = FBAModel(conditions=pd.read_csv('perturbations.csv'))
-        fba_model.solve()
+        solution = fba_model.solve()
+        solution.to_csv('../../output/fba_fluxes.csv')
 
     def test_one_condition_w_sampling(self):
         fba_model = FBAModel(conditions=pd.DataFrame([['arab__L']]), sampling_n=10000)
