@@ -22,11 +22,11 @@ observed_growth = 0.61
 
 
 class ETFLModel(FBAModel):
-    def __init__(self, model_name='ecoli', solver_name='gurobi', conditions=None, sampling_n=1, p_fba=False,
+    def __init__(self, model_name='ecoli', solver_name='gurobi', conditions=None, pfba=False, sampling_n=0,
                  has_thermo=True,
                  has_neidhardt=True):
         start_time = time.time()
-        super().__init__(model_name, solver_name, conditions, sampling_n, p_fba)
+        super().__init__(model_name, solver_name, conditions, sampling_n, pfba)
         if model_name == 'ecoli':
             # Add cystein -> selenocystein transformation for convenience
             selcys = Metabolite(id='selcys__L_c', compartment='c', formula='C3H7NO2Se')
@@ -47,7 +47,8 @@ class ETFLModel(FBAModel):
                                                                            len(coupling_dict), n_mu_bins, time_str)
 
             if has_thermo:
-                self.model = ThermoMEModel(load_thermoDB(dir_path + '/data/ecoli/thermo/thermo_data.thermodb'), model=self.model,
+                self.model = ThermoMEModel(load_thermoDB(dir_path + '/data/ecoli/thermo/thermo_data.thermodb'),
+                                           model=self.model,
                                            growth_reaction=growth_reaction_id, mu_range=mu_range,
                                            n_mu_bins=n_mu_bins,
                                            name=name)

@@ -6,9 +6,9 @@ from pytfa.io import load_thermoDB, read_lexicon, read_compartment_data, annotat
 
 
 class TFAModel(FBAModel):
-    def __init__(self, model_name='ecoli', solver_name='gurobi', conditions=None, sampling_n=1, p_fba=False):
+    def __init__(self, model_name='ecoli', solver_name='gurobi', conditions=None, pfba=False, sampling_n=0):
         start_time = time.time()
-        super().__init__(model_name, solver_name, conditions, sampling_n, p_fba)
+        super().__init__(model_name, solver_name, conditions, sampling_n, pfba)
         if model_name == 'ecoli':
             self.model = ThermoModel(load_thermoDB(dir_path + '/data/ecoli/thermo/thermo_data.thermodb'), self.model)
             annotate_from_lexicon(self.model, read_lexicon(dir_path + '/data/ecoli/thermo/lexicon.csv'))

@@ -7,6 +7,7 @@ from cobra.flux_analysis import pfba
 from cobra.io import load_json_model
 from cobra.sampling import sample
 
+EPSILON = 1e-9
 max_flux = 1000
 ex_uptake = 10
 growth_reaction_id = 'BIOMASS_Ec_iJO1366_core_53p95M'
@@ -15,7 +16,7 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class FBAModel:
-    def __init__(self, model_name='ecoli', solver_name='gurobi', conditions=None, sampling_n=1, p_fba=False):
+    def __init__(self, model_name='ecoli', solver_name='gurobi', conditions=None, pfba=False, sampling_n=0):
         start_time = time.time()
         if model_name == 'ecoli':
             self.model = load_json_model(dir_path + '/data/ecoli/iJO1366.json')
@@ -26,7 +27,7 @@ class FBAModel:
         else:
             self.conditions = conditions
         self.sampling_n = sampling_n
-        self.p_fba = p_fba
+        self.pfba = pfba
         self.reserved_bounds = {}
         self.temp_reactions = set()
         print(f"Build FBA model for {time.time() - start_time:.2f} seconds!")
@@ -45,7 +46,8 @@ class FBAModel:
             results = pd.concat([results, self._calc_fluxes().rename(c_name)], axis=1)
             self._reset_reaction_bounds(condition)
 
-        results = results[(results.T != 0).any()]
+        # results = results[(results.T != 0).any()]
+        results = results[(results.T > EPSILON).any()]
         results = results.sort_index()
         results = results.fillna(0)
         results.loc["net_flux"] = results.sum()
@@ -53,20 +55,29 @@ class FBAModel:
 
     def _calc_fluxes(self):
         start_time = time.time()
-        if self.p_fba:
-            solution = pfba(self.model)
+        if self.sampling_n == 0:
+            if self.pfba:
+                solution = pfba(self.model)
+                print(f"Run pFBA for {(time.time() - start_time):.2f} seconds!")
+            else:
+                solution = self.model.optimize()
+                print(f"Run FBA for {(time.time() - start_time):.2f} seconds!")
             fluxes = solution.fluxes
+            print("Objective:", solution.objective_value)
+            self.model.solver.problem.write(self.__class__.__name__ + '.lp')
         else:
-            solution = self.model.optimize()
-            fluxes = solution.fluxes
-        print(f"Solve LP for {time.time() - start_time:.2f} seconds!")
-        if self.sampling_n > 1:
-            start_time = time.time()
-            fluxes = sample(self.model, n=self.sampling_n, thinning=100, processes=multiprocessing.cpu_count()).mean(
+            fluxes = sample(self.model, n=self.sampling_n, thinning=10, processes=multiprocessing.cpu_count()).mean(
                 axis=0)
+            for reaction in self.model.reactions:
+                b_react_id = reaction.id + '_b'
+                if self.model.reactions.has_id(b_react_id):
+                    if fluxes[reaction.id] > fluxes[b_react_id]:
+                        fluxes[reaction.id] -= fluxes[b_react_id]
+                        fluxes[b_react_id] = 0
+                    else:
+                        fluxes[b_react_id] -= fluxes[reaction.id]
+                        fluxes[reaction.id] = 0
             print(f"Run OptGPSampler for {(time.time() - start_time):.2f} seconds!")
-        print("Objective:", solution.objective_value)
-        self.model.solver.problem.write(self.__class__.__name__ + '.lp')
         return fluxes
 
     def _init_reaction_bounds(self):
@@ -133,7 +144,8 @@ class FBAModel:
 
 
 if __name__ == '__main__':
-    fba_model = FBAModel(conditions=pd.read_csv('data/perturbations.csv'))
+    # fba_model = FBAModel(conditions=pd.read_csv('data/perturbations.csv'))
+    fba_model = FBAModel(pfba=True)
     res = fba_model.solve()
     res = res.sort_index()
     res.to_csv('../../output/fba_fluxes.csv')
