@@ -47,14 +47,14 @@ class ETFLModel(FBAModel):
                                                                            len(coupling_dict), n_mu_bins, time_str)
 
             if has_thermo:
-                self.model = ThermoMEModel(load_thermoDB(dir_path + '/data/ecoli/thermo/thermo_data.thermodb'),
+                self.model = ThermoMEModel(load_thermoDB(dir_path + '/data/thermo/thermo_data.thermodb'),
                                            model=self.model,
                                            growth_reaction=growth_reaction_id, mu_range=mu_range,
                                            n_mu_bins=n_mu_bins,
                                            name=name)
                 self.model.name = name
-                annotate_from_lexicon(self.model, read_lexicon(dir_path + '/data/ecoli/thermo/lexicon.csv'))
-                compartment_data = read_compartment_data(dir_path + '/data/ecoli/thermo/compartment_data.json')
+                annotate_from_lexicon(self.model, read_lexicon(dir_path + '/data/thermo/lexicon.csv'))
+                compartment_data = read_compartment_data(dir_path + '/data/thermo/compartment_data.json')
                 apply_compartment_data(self.model, compartment_data)
                 self.model.prepare()
                 self.model.reactions.MECDPS.thermo['computed'] = False

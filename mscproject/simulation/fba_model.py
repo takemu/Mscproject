@@ -30,11 +30,11 @@ class FBAModel:
         self.pfba = pfba
         self.reserved_bounds = {}
         self.temp_reactions = set()
-        print(f"Build FBA model for {time.time() - start_time:.2f} seconds!")
+        self._init_reaction_bounds()
         self._print_info()
+        print(f"Build FBA model for {time.time() - start_time:.2f} seconds!")
 
     def solve(self):
-        self._init_reaction_bounds()
         print('<< Condition: Control >>')
         results = self._calc_fluxes().rename("control").to_frame()
 
@@ -68,16 +68,16 @@ class FBAModel:
         else:
             fluxes = sample(self.model, n=self.sampling_n, thinning=10, processes=multiprocessing.cpu_count()).mean(
                 axis=0)
-            for reaction in self.model.reactions:
-                b_react_id = reaction.id + '_b'
-                if self.model.reactions.has_id(b_react_id):
-                    if fluxes[reaction.id] > fluxes[b_react_id]:
-                        fluxes[reaction.id] -= fluxes[b_react_id]
-                        fluxes[b_react_id] = 0
-                    else:
-                        fluxes[b_react_id] -= fluxes[reaction.id]
-                        fluxes[reaction.id] = 0
             print(f"Run OptGPSampler for {(time.time() - start_time):.2f} seconds!")
+        for reaction in self.model.reactions:
+            b_react_id = reaction.id + '_b'
+            if self.model.reactions.has_id(b_react_id):
+                if fluxes[reaction.id] > fluxes[b_react_id]:
+                    fluxes[reaction.id] -= fluxes[b_react_id]
+                    fluxes[b_react_id] = 0
+                else:
+                    fluxes[b_react_id] -= fluxes[reaction.id]
+                    fluxes[reaction.id] = 0
         return fluxes
 
     def _init_reaction_bounds(self):
@@ -137,15 +137,22 @@ class FBAModel:
                 reaction.upper_bound = max_flux
 
     def _print_info(self):
-        print("num constraints", len(self.model.constraints))
-        print("num variables", len(self.model.variables))
-        print("num metabolites", len(self.model.metabolites))
-        print("num reactions", len(self.model.reactions))
+        # print("num constraints", len(self.model.constraints))
+        # print("num variables", len(self.model.variables))
+        # print("num metabolites", len(self.model.metabolites))
+        # print("num reactions", len(self.model.reactions))
+
+        info = pd.DataFrame(columns=["value"])
+        info.loc["num constraints"] = len(self.model.constraints)
+        info.loc["num variables"] = len(self.model.variables)
+        info.loc["num metabolites"] = len(self.model.metabolites)
+        info.loc["num reactions"] = len(self.model.reactions)
+        print(info)
 
 
 if __name__ == '__main__':
     # fba_model = FBAModel(conditions=pd.read_csv('data/perturbations.csv'))
     fba_model = FBAModel(pfba=True)
     res = fba_model.solve()
-    res = res.sort_index()
-    res.to_csv('../../output/fba_fluxes.csv')
+    # res = res.sort_index()
+    res.to_csv('../../output/fba_fluxes.csv', float_format='%.3f')
