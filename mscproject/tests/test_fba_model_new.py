@@ -4,73 +4,68 @@ import numpy as np
 import pandas as pd
 from pandas._testing import assert_frame_equal
 
-from mscproject.simulation.fba_model import FBAModel, growth_reaction_id
+from mscproject.simulation.fba_model_new import FBAModel
 
 
 class TestFBAModelBaseline(unittest.TestCase):
-    def setUp(self):
-        self.condition = 'arab__L'
-        self.obj = growth_reaction_id
-
-    def test_fba_baseline(self):
-        fba_model = FBAModel(conditions=pd.DataFrame([[self.condition]]))
-        solution = fba_model.solve()
-        solution.to_csv('fba_small_baseline.csv')
+    def test_fba_small_baseline(self):
+        fba_model = FBAModel()
+        solution = fba_model.solve(conditions=pd.DataFrame([['arab__L']]))
+        solution.to_csv('baseline/fba_small.csv')
 
     def test_fba_batch_baseline(self):
-        fba_model = FBAModel(conditions=pd.read_csv('../simulation/data/perturbations.csv'))
-        solution = fba_model.solve()
-        solution.to_csv('fba_batch_baseline.csv')
+        fba_model = FBAModel()
+        solution = fba_model.solve(conditions=pd.read_csv('../simulation/data/perturbations.csv'))
+        solution.to_csv('baseline/fba_batch.csv')
 
-    def test_pfba_baseline(self):
-        fba_model = FBAModel(conditions=pd.DataFrame([[self.condition]]), pfba=True)
-        solution = fba_model.solve()
-        solution.to_csv('pfba_small_baseline.csv')
+    def test_pfba_small_baseline(self):
+        fba_model = FBAModel()
+        solution = fba_model.solve(alg='pfba', conditions=pd.DataFrame([['arab__L']]))
+        solution.to_csv('baseline/pfba_small.csv')
 
     def test_pfba_batch_baseline(self):
-        fba_model = FBAModel(conditions=pd.read_csv('../simulation/data/perturbations.csv'), pfba=True)
-        solution = fba_model.solve()
-        solution.to_csv('pfba_batch_baseline.csv')
+        fba_model = FBAModel()
+        solution = fba_model.solve(alg='pfba', conditions=pd.read_csv('../simulation/data/perturbations.csv'))
+        solution.to_csv('baseline/pfba_batch.csv')
 
-    def test_sampling(self):
-        sampling_model = FBAModel(conditions=pd.DataFrame([[self.condition]]), sampling_n=10000)
-        solution = sampling_model.solve()
-        solution.to_csv('sampling_baseline.csv')
+    def test_small_sampling(self):
+        sampling_model = FBAModel()
+        solution = sampling_model.solve(conditions=pd.DataFrame([['arab__L']]), sampling_n=10000)
+        solution.to_csv('baseline/sampling_small.csv')
 
 
 class TestFBAModel(unittest.TestCase):
     def setUp(self):
-        self.condition = 'arab__L'
-        self.obj = growth_reaction_id
+        self.obj = 'BIOMASS_Ec_iJO1366_core_53p95M'
 
-    def test_fba(self):
-        fba_model = FBAModel(conditions=pd.DataFrame([[self.condition]]))
-        solution = fba_model.solve()
-        baseline = pd.read_csv('fba_small_baseline.csv', index_col=0)
+    def test_fba_small(self):
+        fba_model = FBAModel()
+        solution = fba_model.solve(conditions=pd.DataFrame([['arab__L']]))
+        baseline = pd.read_csv('baseline/fba_small.csv', index_col=0)
         assert_frame_equal(solution, baseline)
 
     def test_fba_batch(self):
-        fba_model = FBAModel(conditions=pd.read_csv('../simulation/data/perturbations.csv'))
-        solution = fba_model.solve()
-        baseline = pd.read_csv('fba_batch_baseline.csv', index_col=0)
+        fba_model = FBAModel()
+        solution = fba_model.solve(conditions=pd.read_csv('../simulation/data/perturbations.csv'))
+        baseline = pd.read_csv('baseline/fba_batch.csv', index_col=0)
         solution.columns = baseline.columns
         assert_frame_equal(solution, baseline)
 
-    def test_pfba(self):
-        fba_model = FBAModel(conditions=pd.DataFrame([[self.condition]]), pfba=True)
-        solution = fba_model.solve()
-        baseline = pd.read_csv('pfba_small_baseline.csv', index_col=0)
+    def test_pfba_small(self):
+        fba_model = FBAModel()
+        solution = fba_model.solve(alg='pfba', conditions=pd.DataFrame([['arab__L']]))
+        baseline = pd.read_csv('baseline/pfba_small.csv', index_col=0)
         assert_frame_equal(solution, baseline)
 
     def test_pfba_batch(self):
-        fba_model = FBAModel(conditions=pd.read_csv('../simulation/data/perturbations.csv'), pfba=True)
-        solution = fba_model.solve()
-        baseline = pd.read_csv('pfba_batch_baseline.csv', index_col=0)
+        fba_model = FBAModel()
+        solution = fba_model.solve(alg='pfba', conditions=pd.read_csv('../simulation/data/perturbations.csv'))
+        baseline = pd.read_csv('baseline/pfba_batch.csv', index_col=0)
         solution.columns = baseline.columns
         assert_frame_equal(solution, baseline)
 
     def test_duplicate_yangs_data(self):
-        yangs = pd.read_csv('yangs_data.csv', index_col=0)
+        yangs = pd.read_csv('old/yangs_data.csv', index_col=0)
         count = 0
         print('control', yangs.loc[self.obj, 'control'], yangs.loc['net_flux', 'control'])
         results = yangs['control']
@@ -86,7 +81,7 @@ class TestFBAModel(unittest.TestCase):
         results.to_csv('../../output/dup_yangs_data.csv', float_format='%.6f')
 
     def test_duplicate_pfba_data(self):
-        pfba_data = pd.read_csv('pfba_batch_baseline.csv', index_col=0)
+        pfba_data = pd.read_csv('baseline/pfba_batch.csv', index_col=0)
         count = 0
         print('control', pfba_data.loc[self.obj, 'control'], pfba_data.loc['net_flux', 'control'])
         results = pfba_data['control']
@@ -103,9 +98,9 @@ class TestFBAModel(unittest.TestCase):
 
     def test_comparison(self):
         condition = 'ala__D'
-        yangs_data = pd.read_csv('yangs_data.csv', index_col=0)
+        yangs_data = pd.read_csv('old/yangs_data.csv', index_col=0)
         yangs_data = yangs_data[['control', condition]]
-        pfba_data = FBAModel(conditions=pd.DataFrame([[condition]]), pfba=True).solve()
+        pfba_data = FBAModel().solve(alg='pfba', conditions=pd.DataFrame([[condition]]))
 
         x = yangs_data[condition].to_frame()
         x = x[(x.T != 0).any()]
@@ -116,8 +111,8 @@ class TestFBAModel(unittest.TestCase):
         compare_df.to_csv('../../output/compare_df.csv', float_format='%.6f')
 
     def test_similarity(self):
-        yangs_data = pd.read_csv('yangs_data.csv', index_col=0)
-        pfba_data = pd.read_csv('pfba_batch_baseline.csv', index_col=0)
+        yangs_data = pd.read_csv('baseline/yangs_data.csv', index_col=0)
+        pfba_data = pd.read_csv('baseline/pfba_batch.csv', index_col=0)
         diff_count = 0
         equal_count = 0
         total_count = 0

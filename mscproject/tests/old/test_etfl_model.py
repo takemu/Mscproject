@@ -3,8 +3,8 @@ import unittest
 import pandas as pd
 from pandas._testing import assert_frame_equal
 
-from mscproject.simulation.etfl_model import ETFLModel
-from mscproject.simulation.fba_model import growth_reaction_id
+from mscproject.simulation.old.etfl_model import ETFLModel
+from mscproject.simulation.old.fba_model import growth_reaction_id
 
 
 class TestETFLModel(unittest.TestCase):

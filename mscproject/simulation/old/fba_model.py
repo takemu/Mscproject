@@ -151,8 +151,9 @@ class FBAModel:
 
 
 if __name__ == '__main__':
+    fba_model = FBAModel()
     # fba_model = FBAModel(conditions=pd.read_csv('data/perturbations.csv'))
-    fba_model = FBAModel(pfba=True)
+    fba_model = FBAModel(pfba=True, conditions=pd.DataFrame([['arab__L']]))
     res = fba_model.solve()
     # res = res.sort_index()
-    res.to_csv('../../output/fba_fluxes.csv', float_format='%.3f')
+    res.to_csv('../../output/fba_fluxes.csv', float_format='%.6f')
