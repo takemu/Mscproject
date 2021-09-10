@@ -7,7 +7,9 @@ from cobra.io import load_json_model
 from cobra.sampling import sample
 from pandas import Series
 
-EPSILON = 1e-9
+from pytfa.utils.logger import get_bistream_logger
+
+# EPSILON = 1e-2
 max_flux = 1000
 default_uptake = 10
 special_uptakes = {'EX_glc__D_e': default_uptake, 'EX_o2_e': 18.5, 'EX_cbl1_e': 0.1}
@@ -15,7 +17,7 @@ special_uptakes = {'EX_glc__D_e': default_uptake, 'EX_o2_e': 18.5, 'EX_cbl1_e': 
 
 class FBAModel:
     def __init__(self, model_name='ecoli', objective='biomass', solver='gurobi'):
-        self.logger = logging.getLogger(FBAModel.__name__)
+        self.logger = get_bistream_logger(self.__class__.__name__)
         self.logger.setLevel(logging.INFO)
 
         if model_name == 'ecoli':
@@ -35,7 +37,7 @@ class FBAModel:
                 e_reaction = self.model.reactions.get_by_id(e_react_id)
                 e_reaction.lower_bound = -uptake
 
-    def solve(self, alg='fba', sampling_n=0, conditions=pd.DataFrame([])):
+    def solve(self, alg='fba', decimals=2, sampling_n=0, conditions=pd.DataFrame([])):
         self.logger.info('<< Condition: Control >>')
         results = self._calc_fluxes(alg, sampling_n).rename("control").to_frame()
         for _, condition in conditions.iterrows():
@@ -45,10 +47,11 @@ class FBAModel:
             self._modify_model(condition)
             results = pd.concat([results, self._calc_fluxes(alg, sampling_n).rename(c_name)], axis=1)
             self._revert_model()
-        results = results[(results.T > EPSILON).any()]
+        results = results[(results.T >= 10 ** -decimals).any()]
         results = results.sort_index()
         results = results.fillna(0)
         results.loc["net_flux"] = results.sum()
+        results = results.round(decimals=decimals)
         return results
 
     def _calc_fluxes(self, alg='fba', sampling_n=0):
@@ -59,7 +62,7 @@ class FBAModel:
             else:
                 solution = self.model.optimize()
             reversible_fluxes = solution.fluxes
-            self.logger.info(f"Objective: {solution.objective_value}")
+            self.logger.info(f"Objective: {solution.objective_value:.6f}")
         else:
             reversible_fluxes = sample(self.model, n=sampling_n, thinning=10,
                                        processes=multiprocessing.cpu_count()).mean(axis=0)
@@ -99,9 +102,11 @@ class FBAModel:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
+    # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fba_model = FBAModel()
-    res = fba_model.solve(alg='pfba')
-    # res = fba_model.solve(alg='pfba', batch=pd.read_csv('data/perturbations.csv'))
-    res.to_csv('../../output/fba_fluxes_new.csv', float_format='%.6f')
+    fba_model.solve().to_csv('../../output/fba_fluxes.csv')
+    fba_model.solve(decimals=1).to_csv('../../output/fba_fluxes_0.1.csv')
+    fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
+        '../../output/pfba_fluxes_batch.csv')
+    fba_model.solve(alg='pfba', decimals=1, conditions=pd.read_csv('data/perturbations.csv')).to_csv(
+        '../../output/pfba_fluxes_batch_0.1.csv')

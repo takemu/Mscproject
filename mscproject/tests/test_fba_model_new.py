@@ -139,6 +139,12 @@ class TestFBAModel(unittest.TestCase):
         print('Total:', total_count, diff_count, equal_count)
         print('Avg. similarity:', total_similarity / total_count)
 
+    def test_two_rounds_solve(self):
+        fba_model = FBAModel()
+        fba_model.reactions.get_by_id(self.obj).bounds = 1, 1
+        fba_model.solve(conditions=pd.read_csv('perturbations_small.csv'))
+
+
 
 if __name__ == '__main__':
     unittest.main()
