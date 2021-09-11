@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from optlang.exceptions import SolverError
 
-from mscproject.simulation.fba_model_new import FBAModel
+from fba_model_new import FBAModel
 from pytfa import ThermoModel
 from pytfa.io import load_thermoDB, read_lexicon, read_compartment_data, annotate_from_lexicon, apply_compartment_data
 from pytfa.optim import relax_dgo

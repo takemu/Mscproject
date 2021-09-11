@@ -6,7 +6,7 @@ from cobra import Metabolite, Reaction
 
 from etfl.core.allocation import add_interpolation_variables, add_protein_mass_requirement, add_rna_mass_requirement, \
     add_dna_mass_requirement
-from mscproject.simulation.fba_model_new import FBAModel
+from fba_model_new import FBAModel
 from pytfa.io import load_thermoDB, read_lexicon, annotate_from_lexicon, read_compartment_data, apply_compartment_data
 from pytfa.optim.relaxation import relax_dgo
 from etfl.core import ThermoMEModel, MEModel
@@ -136,4 +136,4 @@ class ETFLModel(FBAModel):
 if __name__ == '__main__':
     etfl_model = ETFLModel()
     solution = etfl_model.solve()
-    solution.to_csv('../../output/etfl_fluxes.csv', float_format='%.2f')
+    solution.to_csv('../../output/etfl_fluxes.csv')
