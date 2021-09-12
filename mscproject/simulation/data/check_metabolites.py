@@ -4,7 +4,7 @@ from cobra.io import load_json_model
 
 class CheckMetabolites:
     def __init__(self):
-        self.model = load_json_model('ecoli/iJO1366_old.json')
+        self.model = load_json_model('ecoli/iJO1366.json')
         self.conditions = pd.read_csv('perturbations.csv')
 
     def run(self):

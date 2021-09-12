@@ -29,7 +29,7 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 
 class ETFLModel(FBAModel):
     def __init__(self, model_name='ecoli', objective='biomass', solver='gurobi', objective_lb=0.1):
-        # start_time = time.time()
+        start_time = time.time()
         super().__init__(model_name, objective, solver)
         if model_name == 'ecoli':
             # Add cystein -> selenocystein transformation for convenience
@@ -115,10 +115,15 @@ class ETFLModel(FBAModel):
             self.model.add_trna_mass_balances()
             self.model.growth_reaction.lower_bound = objective_lb
             self.model.repair()
+            print(f"Building ETFL model costs {time.time() - start_time:.2f} seconds!")
             try:
+                start_time = time.time()
                 self.model.optimize()
             except (AttributeError, SolverError):
-                self.model, _, _ = relax_dgo(self.model)
+                print(f"Solving no relaxed model costs {time.time() - start_time:.2f} seconds!")
+                start_time = time.time()
+                self.model, _, _ = relax_dgo(self.model, in_place=True)
+                print(f"Relaxing model costs {time.time() - start_time:.2f} seconds!")
             # self.model.growth_reaction.lower_bound = 0
             # print(f"Build ETFL model for {time.time() - start_time:.2f} seconds!")
             self.model.print_info()
@@ -135,5 +140,9 @@ class ETFLModel(FBAModel):
 
 if __name__ == '__main__':
     etfl_model = ETFLModel()
+
+    start_time = time.time()
     solution = etfl_model.solve()
+    print(f"Solving ETFL model costs {time.time() - start_time:.2f} seconds!")
+
     solution.to_csv('../../output/etfl_fluxes.csv')
