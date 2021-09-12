@@ -30,7 +30,7 @@ class CheckMetabolites:
                     row.append('')
                 df.loc[len(df), :] = row
         df = df.drop_duplicates()
-        df.to_csv('../../../output/check_metabolites.csv', index=False)
+        df.to_csv('output/check_metabolites.csv', index=False)
 
 
 if __name__ == '__main__':

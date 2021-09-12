@@ -29,9 +29,9 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class ETFLModel(FBAModel):
-    def __init__(self, model_name='ecoli', objective='biomass', solver='gurobi', objective_lb=0.1):
+    def __init__(self, model_name='ecoli', solver='gurobi', min_biomass=0.55):
         start_time = time.time()
-        super().__init__(model_name, objective, solver)
+        super().__init__(model_name, solver, min_biomass)
         if model_name == 'ecoli':
             # Add cystein -> selenocystein transformation for convenience
             selcys = Metabolite(id='selcys__L_c', compartment='c', formula='C3H7NO2Se')
@@ -114,7 +114,7 @@ class ETFLModel(FBAModel):
             # Need to put after, because dummy has to be taken into account if used.
             self.model.populate_expression()
             self.model.add_trna_mass_balances()
-            self.model.growth_reaction.lower_bound = objective_lb
+            # self.model.growth_reaction.lower_bound = objective_lb
             self.model.repair()
             print(f"Building ETFL model costs {time.time() - start_time:.2f} seconds!")
             try:
@@ -143,10 +143,15 @@ if __name__ == '__main__':
     etfl_model = ETFLModel()
 
     start_time = time.time()
-    etfl_model.solve().to_csv('../../output/etfl_fluxes.csv')
-    print(f"Solving ETFL model costs {time.time() - start_time:.2f} seconds!")
+    etfl_model.solve().to_csv('output/etfl_fluxes.csv')
+    print(f"Solving a ETFL model costs {time.time() - start_time:.2f} seconds!")
+
+    start_time = time.time()
+    etfl_model.solve(conditions=pd.read_csv('data/perturbations.csv')).to_csv(
+        'output/etfl_fluxes_batch.csv')
+    print(f"Solving all etfl cases costs {time.time() - start_time:.2f} seconds!")
 
     start_time = time.time()
     etfl_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-        '../../output/petfl_fluxes_batch.csv')
-    print(f"Solving all cases costs {time.time() - start_time:.2f} seconds!")
+        'output/petfl_fluxes_batch.csv')
+    print(f"Solving all petfl cases costs {time.time() - start_time:.2f} seconds!")

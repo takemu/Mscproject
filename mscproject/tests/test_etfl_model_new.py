@@ -27,7 +27,7 @@ class TestETFLModelBaseline(unittest.TestCase):
         solution.to_csv('baseline/petfl_batch.csv')
 
     def test_etfl_batch_baseline2(self):
-        etfl_model = ETFLModel(objective_lb=0)
+        etfl_model = ETFLModel(min_biomass=0)
         solution = etfl_model.solve(alg='pfba', conditions=pd.read_csv('../simulation/data/perturbations.csv'))
         solution.to_csv('baseline/petfl_batch2.csv')
 

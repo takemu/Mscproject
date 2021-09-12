@@ -2,9 +2,12 @@ import logging
 import multiprocessing
 import os
 import pandas as pd
+from cobra.exceptions import OptimizationError
 from cobra.flux_analysis import pfba
 from cobra.io import load_json_model
 from cobra.sampling import sample
+from optlang.exceptions import SolverError
+from optlang.interface import OPTIMAL
 from pandas import Series
 
 from pytfa.utils.logger import get_bistream_logger
@@ -16,14 +19,15 @@ special_uptakes = {'EX_glc__D_e': default_uptake, 'EX_o2_e': 18.5, 'EX_cbl1_e': 
 
 
 class FBAModel:
-    def __init__(self, model_name='ecoli', objective='biomass', solver='gurobi'):
+    def __init__(self, model_name='ecoli', solver='gurobi', min_biomass=0.55):
         self.logger = get_bistream_logger(self.__class__.__name__)
         self.logger.setLevel(logging.INFO)
 
         if model_name == 'ecoli':
             self.model = load_json_model(os.path.dirname(os.path.abspath(__file__)) + '/data/ecoli/iJO1366.json')
-            if objective == 'biomass':
-                self.model.objective = 'BIOMASS_Ec_iJO1366_core_53p95M'
+            self.biomass_reaction = 'BIOMASS_Ec_iJO1366_core_53p95M'
+            self.model.objective = self.biomass_reaction
+            self.model.reactions.get_by_id(self.biomass_reaction).lower_bound = min_biomass
             self.model.solver = solver
         self._init_model()
         self._print_summary()
@@ -47,7 +51,7 @@ class FBAModel:
             self._modify_model(condition)
             results = pd.concat([results, self._calc_fluxes(alg, sampling_n).rename(c_name)], axis=1)
             self._revert_model()
-        results = results[(results.T >= 10 ** -decimals).any()]
+        results = results[(results >= 10 ** -decimals).any(axis=1) | (results.index == self.biomass_reaction)]
         results = results.sort_index()
         results = results.fillna(0)
         results.loc["net_flux"] = results.sum()
@@ -55,24 +59,31 @@ class FBAModel:
         return results
 
     def _calc_fluxes(self, alg='fba', sampling_n=0):
-        if sampling_n == 0:
-            self.model.solver.problem.write(self.__class__.__name__ + '.lp')
-            if alg == 'pfba':
-                solution = pfba(self.model)
+        try:
+            if sampling_n == 0:
+                self.model.solver.problem.write(self.__class__.__name__ + '.lp')
+                if alg == 'pfba':
+                    solution = pfba(self.model)
+                else:
+                    solution = self.model.optimize()
+                if solution.status == OPTIMAL:
+                    reversible_fluxes = solution.fluxes
+                    self.logger.info(f"Optimal objective: {solution.objective_value:.2f}")
+                else:
+                    raise OptimizationError(solution.status)
             else:
-                solution = self.model.optimize()
-            reversible_fluxes = solution.fluxes
-            self.logger.info(f"Objective: {solution.objective_value:.6f}")
-        else:
-            reversible_fluxes = sample(self.model, n=sampling_n, thinning=10,
-                                       processes=multiprocessing.cpu_count()).mean(axis=0)
-        irreversible_fluxes = {}
-        for reaction, flux in reversible_fluxes.iteritems():
-            if flux < 0:
-                irreversible_fluxes[reaction + '_b'] = -flux
-            else:
-                irreversible_fluxes[reaction] = flux
-        return Series(irreversible_fluxes.values(), index=irreversible_fluxes.keys())
+                reversible_fluxes = sample(self.model, n=sampling_n, thinning=10,
+                                           processes=multiprocessing.cpu_count()).mean(axis=0)
+            irreversible_fluxes = {}
+            for reaction, flux in reversible_fluxes.iteritems():
+                if flux < 0:
+                    irreversible_fluxes[reaction + '_b'] = -flux
+                else:
+                    irreversible_fluxes[reaction] = flux
+            return Series(irreversible_fluxes.values(), index=irreversible_fluxes.keys())
+        except (AttributeError, SolverError, OptimizationError) as e:
+            self.logger.error(f"{str(e).capitalize()} solution!")
+            return Series([], dtype=object)
 
     def _modify_model(self, condition):
         for met_id in condition:
@@ -104,9 +115,9 @@ class FBAModel:
 if __name__ == '__main__':
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fba_model = FBAModel()
-    fba_model.solve().to_csv('../../output/fba_fluxes.csv')
-    fba_model.solve(decimals=1).to_csv('../../output/fba_fluxes_0.1.csv')
+    fba_model.solve().to_csv('output/fba_fluxes.csv')
+    # fba_model.solve(decimals=1).to_csv('output/fba_fluxes_0.1.csv')
     fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-        '../../output/pfba_fluxes_batch.csv')
-    fba_model.solve(alg='pfba', decimals=1, conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-        '../../output/pfba_fluxes_batch_0.1.csv')
+        'output/pfba_fluxes_batch.csv')
+    # fba_model.solve(alg='pfba', decimals=1, conditions=pd.read_csv('data/perturbations.csv')).to_csv(
+    #     'output/pfba_fluxes_batch_0.1.csv')
