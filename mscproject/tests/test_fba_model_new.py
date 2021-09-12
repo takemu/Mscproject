@@ -65,17 +65,17 @@ class TestFBAModel(unittest.TestCase):
         assert_frame_equal(solution, baseline)
 
     def test_duplicate_yangs_data(self):
-        yangs = pd.read_csv('old/yangs_data.csv', index_col=0)
+        yangs = pd.read_csv('baseline/yangs_data.csv', index_col=0)
         count = 0
         print('control', yangs.loc[self.obj, 'control'], yangs.loc['net_flux', 'control'])
         results = yangs['control']
         for column in yangs.iloc[:, 1:]:
             if np.isclose(yangs.loc[self.obj, column], yangs.loc[self.obj, 'control'], atol=1.e-3):
                 if np.isclose(yangs.loc['net_flux', column], yangs.loc['net_flux', 'control'], atol=1.e-3):
-                    if column[-2] != '.':
-                        print(column, yangs.loc[self.obj, column], yangs.loc['net_flux', column])
-                        results = pd.concat([results, yangs[column]], axis=1)
-                        count += 1
+                    # if column[-2] != '.':
+                    print(column, yangs.loc[self.obj, column], yangs.loc['net_flux', column])
+                    results = pd.concat([results, yangs[column]], axis=1)
+                    count += 1
         print('Total:', count)
         results = results[(results.T != 0).any()]
         results.to_csv('../../output/dup_yangs_data.csv', float_format='%.6f')
@@ -88,17 +88,17 @@ class TestFBAModel(unittest.TestCase):
         for column in pfba_data.iloc[:, 1:]:
             if np.isclose(pfba_data.loc[self.obj, column], pfba_data.loc[self.obj, 'control'], atol=1.e-3):
                 if np.isclose(pfba_data.loc['net_flux', column], pfba_data.loc['net_flux', 'control'], atol=1.e-3):
-                    if column[-2] != '.':
-                        print(column, pfba_data.loc[self.obj, column], pfba_data.loc['net_flux', column])
-                        results = pd.concat([results, pfba_data[column]], axis=1)
-                        count += 1
+                    # if column[-2] != '.':
+                    print(column, pfba_data.loc[self.obj, column], pfba_data.loc['net_flux', column])
+                    results = pd.concat([results, pfba_data[column]], axis=1)
+                    count += 1
         print('Total:', count)
         results = results[(results.T != 0).any()]
         results.to_csv('../../output/dup_pfba_data.csv', float_format='%.6f')
 
     def test_comparison(self):
         condition = 'ala__D'
-        yangs_data = pd.read_csv('old/yangs_data.csv', index_col=0)
+        yangs_data = pd.read_csv('baseline/yangs_data.csv', index_col=0)
         yangs_data = yangs_data[['control', condition]]
         pfba_data = FBAModel().solve(alg='pfba', conditions=pd.DataFrame([[condition]]))
 
