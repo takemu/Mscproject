@@ -2,6 +2,7 @@ import logging
 import os
 import time
 
+import pandas as pd
 from cobra import Metabolite, Reaction
 
 from etfl.core.allocation import add_interpolation_variables, add_protein_mass_requirement, add_rna_mass_requirement, \
@@ -142,7 +143,10 @@ if __name__ == '__main__':
     etfl_model = ETFLModel()
 
     start_time = time.time()
-    solution = etfl_model.solve()
+    etfl_model.solve().to_csv('../../output/etfl_fluxes.csv')
     print(f"Solving ETFL model costs {time.time() - start_time:.2f} seconds!")
 
-    solution.to_csv('../../output/etfl_fluxes.csv')
+    start_time = time.time()
+    etfl_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
+        '../../output/petfl_fluxes_batch.csv')
+    print(f"Solving all cases costs {time.time() - start_time:.2f} seconds!")
