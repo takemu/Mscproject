@@ -1,38 +1,38 @@
-import logging
-import os
 import time
+from os.path import join
 
+import numpy as np
 import pandas as pd
-from cobra import Metabolite, Reaction
+from cobra import Metabolite, Reaction, Gene
 
 from etfl.core.allocation import add_interpolation_variables, add_protein_mass_requirement, add_rna_mass_requirement, \
     add_dna_mass_requirement
-from fba_model_new import FBAModel
+from etfl.core.rna import mRNA
+from fba_model import FBAModel
+from mscproject.simulation.data import data_dir
 from pytfa.io import load_thermoDB, read_lexicon, annotate_from_lexicon, read_compartment_data, apply_compartment_data
 from pytfa.optim.relaxation import relax_dgo
 from etfl.core import ThermoMEModel, MEModel
 from pytfa.utils.logger import get_timestr
 from etfl.data.ecoli import get_coupling_dict, get_mrna_dict, get_rib, get_rnap, get_monomers_dict, get_nt_sequences, \
     get_ratios, get_neidhardt_data, get_mrna_metrics, get_enz_metrics, remove_from_biomass_equation, \
-    get_ecoli_gen_stats, get_essentials
+    get_ecoli_gen_stats, get_essentials, bernstein_ecoli_deg_rates, rrna_genes, kdeg_rib, kdeg_mrna
 from optlang.exceptions import SolverError
 
 # McCloskey2014 values
-glc_uptake = 7.54
-glc_uptake_std = 0.56
-observed_growth_std = 0.02
-observed_growth = 0.61
+# glc_uptake = 7.54
+# glc_uptake_std = 0.56
+# observed_growth_std = 0.02
+# observed_growth = 0.61
 mu_range = [0, 3.5]
 n_mu_bins = 128
-growth_reaction_id = 'BIOMASS_Ec_iJO1366_core_53p95M'
-dir_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class ETFLModel(FBAModel):
-    def __init__(self, model_name='ecoli', solver='gurobi', min_biomass=0.55):
+    def __init__(self, model_code='ecoli:iJO1366', solver='gurobi', min_biomass=0.55):
         start_time = time.time()
-        super().__init__(model_name, solver, min_biomass)
-        if model_name == 'ecoli':
+        super().__init__(model_code, solver, min_biomass)
+        if self.species == 'ecoli':
             # Add cystein -> selenocystein transformation for convenience
             selcys = Metabolite(id='selcys__L_c', compartment='c', formula='C3H7NO2Se')
             selcys_rxn = Reaction(id='PSEUDO_selenocystein_synthase', name='PSEUDO Selenocystein_Synthase')
@@ -49,28 +49,32 @@ class ETFLModel(FBAModel):
             essentials = get_essentials()
 
             # if has_thermo:
-            thermo_db = load_thermoDB(dir_path + '/data/thermo/thermo_data.thermodb')
+            thermo_db = load_thermoDB(join(data_dir, 'thermo/thermo_data.thermodb'))
             self.model = ThermoMEModel(thermo_db,
                                        model=self.model,
-                                       growth_reaction=growth_reaction_id, mu_range=mu_range,
+                                       growth_reaction=self.biomass_reaction, mu_range=mu_range,
                                        n_mu_bins=n_mu_bins)
-            self.model.name = 'iJO1366_ETFL'
+            self.model.name = self.model_name
             # annotate_from_lexicon(self.model, read_lexicon(dir_path + '/data/thermo/lexicon.csv'))
             # compartment_data = read_compartment_data(dir_path + '/data/thermo/compartment_data.json')
             # apply_compartment_data(self.model, compartment_data)
-            apply_compartment_data(self.model, read_compartment_data(dir_path + '/data/thermo/compartment_data.json'))
-            annotate_from_lexicon(self.model, read_lexicon(dir_path + '/data/thermo/lexicon.csv'))
+            apply_compartment_data(self.model, read_compartment_data(join(data_dir, 'thermo/compartment_data.json')))
+            annotate_from_lexicon(self.model, read_lexicon(join(data_dir, 'thermo/lexicon.csv')))
             self.model.prepare()
             # self.model.reactions.MECDPS.thermo['computed'] = False
             # self.model.reactions.NDPK4.thermo['computed'] = False
             # self.model.reactions.TMDPP.thermo['computed'] = False
+
             # self.model.reactions.ARGAGMt7pp.thermo['computed'] = False
             self.model.convert()
             # else:
             #     self.model = MEModel(model=self.model, growth_reaction=growth_reaction_id, mu_range=mu_range,
             #                          n_mu_bins=n_mu_bins, name=name)
-            mrna_dict = get_mrna_dict(self.model)
-            nt_sequences = get_nt_sequences()
+            # mrna_dict = get_mrna_dict(self.model)
+            # nt_sequences = get_nt_sequences()
+            nt_sequences = pd.read_csv(join(data_dir, f'{self.species}/{self.model_name}_nt_seq_kegg.csv'), index_col=0,
+                                       header=None).iloc[:, 0]
+            mrna_dict = self.get_mrna_dict(nt_sequences)
             rnap = get_rnap()
             rib = get_rib()
 
@@ -138,9 +142,36 @@ class ETFLModel(FBAModel):
                 rxn.id = '_' + rxn.id
         self.model.repair()
 
+    def get_mrna_dict(self, nt_sequences):
+        mrna_dict = dict()
+        # Generate a mRNA dict
+        for x in nt_sequences.index:
+            try:
+                the_gene = self.model.genes.get_by_id(x)
+            except KeyError:
+                self.model.genes += [Gene(id=x)]
+                the_gene = self.model.genes.get_by_id(x)
+            # Try to get half life from Bernstein et al.
+            try:
+                t_half = bernstein_ecoli_deg_rates.loc[x.upper()]['medium, min.1']  # M9 medium
+                # Mean half life of mrna is 5 minutes in ecoli
+                # tau = t_0.5 /ln(2)
+                # kdeg = 1/tau [min^-1] * [min/h]
+                this_kdeg_mrna = (60 * np.log(2) / t_half)
+            except KeyError:
+                if x in rrna_genes:
+                    this_kdeg_mrna = kdeg_rib  # Same as ribosome
+                else:
+                    this_kdeg_mrna = kdeg_mrna  # Average value of 5 mins
+            if np.isnan(this_kdeg_mrna):
+                this_kdeg_mrna = kdeg_mrna  # Average value of 5 mins
+            new_mrna = mRNA(x, kdeg=this_kdeg_mrna, gene_id=the_gene.id)
+            mrna_dict[x] = new_mrna
+        return mrna_dict
+
 
 if __name__ == '__main__':
-    etfl_model = ETFLModel()
+    etfl_model = ETFLModel(model_code='ecoli:iML1515')
 
     start_time = time.time()
     etfl_model.solve().to_csv('output/etfl_fluxes.csv')

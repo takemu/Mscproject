@@ -19,13 +19,18 @@ special_uptakes = {'EX_glc__D_e': default_uptake, 'EX_o2_e': 18.5, 'EX_cbl1_e': 
 
 
 class FBAModel:
-    def __init__(self, model_name='ecoli', solver='gurobi', min_biomass=0.55):
-        self.logger = get_bistream_logger(self.__class__.__name__)
+    def __init__(self, model_code='ecoli:iJO1366', solver='gurobi', min_biomass=0.55):
+        self.logger = get_bistream_logger((model_code + ':' + self.__class__.__name__).replace(':', '_'))
         self.logger.setLevel(logging.INFO)
-
-        if model_name == 'ecoli':
-            self.model = load_json_model(os.path.dirname(os.path.abspath(__file__)) + '/data/ecoli/iJO1366.json')
-            self.biomass_reaction = 'BIOMASS_Ec_iJO1366_core_53p95M'
+        self.species = model_code.split(':')[0]
+        self.model_name = model_code.split(':')[-1]
+        if self.species.lower() == 'ecoli':
+            if self.model_name.lower() == 'iml1515':
+                self.model = load_json_model(os.path.dirname(os.path.abspath(__file__)) + '/data/ecoli/iML1515.json')
+                self.biomass_reaction = 'BIOMASS_Ec_iML1515_core_75p37M'
+            else:
+                self.model = load_json_model(os.path.dirname(os.path.abspath(__file__)) + '/data/ecoli/iJO1366.json')
+                self.biomass_reaction = 'BIOMASS_Ec_iJO1366_core_53p95M'
             self.model.objective = self.biomass_reaction
             self.model.reactions.get_by_id(self.biomass_reaction).lower_bound = min_biomass
             self.model.solver = solver
@@ -82,7 +87,7 @@ class FBAModel:
                     irreversible_fluxes[reaction] = flux
             return Series(irreversible_fluxes.values(), index=irreversible_fluxes.keys())
         except (AttributeError, SolverError, OptimizationError) as e:
-            self.logger.error(f"{str(e).capitalize()} solution!")
+            self.logger.error(f'{str(e).capitalize()}')
             return Series([], dtype=object)
 
     def _modify_model(self, condition):
@@ -114,7 +119,7 @@ class FBAModel:
 
 if __name__ == '__main__':
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fba_model = FBAModel()
+    fba_model = FBAModel(model_code='ecoli:iML1515')
     fba_model.solve().to_csv('output/fba_fluxes.csv')
     # fba_model.solve(decimals=1).to_csv('output/fba_fluxes_0.1.csv')
     fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
