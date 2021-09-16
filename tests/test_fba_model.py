@@ -136,6 +136,7 @@ class TestFBAModel(unittest.TestCase):
             total_count += 1
         print('Total:', total_count, diff_count, equal_count)
         print(f'Avg. similarity:{total_similarity / total_count * 100:2.2f}%')
+        self.assertTrue(total_similarity / total_count > 0.9)
 
     def test_two_rounds_solve(self):
         fba_model = FBAModel()

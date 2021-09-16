@@ -25,7 +25,7 @@ def get_from_kegg(gene_id):
         return np.nan
 
 
-# def crawl_nt_sequences(model_code='ecoli:iJO1366'):
+# def run(model_code='ecoli:iJO1366'):
 #     fba_model = FBAModel(model_code)
 #     gene_ids = [gene.id for gene in fba_model.model.genes]
 #     gene_ids.sort()
@@ -51,7 +51,7 @@ def get_from_kegg(gene_id):
 #                         read_sequence = True
 #             out_file.write(gene_id + ',' + sequence + '\n')
 
-def crawl_nt_sequences(model_code='ecoli:iJO1366', database='kegg'):
+def run(model_code='ecoli:iJO1366', database='kegg'):
     fba_model = FBAModel(model_code)
     if fba_model.species == 'ecoli':
         gene_ids = pd.Series([f'eco:{gene.id}:{gene.name}' for gene in fba_model.model.genes])
@@ -66,5 +66,5 @@ def crawl_nt_sequences(model_code='ecoli:iJO1366', database='kegg'):
 
 
 if __name__ == '__main__':
-    crawl_nt_sequences()
-    # crawl_nt_sequences('ecoli:iML1515')
+    run()
+    # run('ecoli:iML1515')

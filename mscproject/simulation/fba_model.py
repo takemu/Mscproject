@@ -1,6 +1,8 @@
 import logging
 import multiprocessing
 import os
+
+import numpy as np
 import pandas as pd
 from cobra.exceptions import OptimizationError
 from cobra.flux_analysis import pfba
@@ -12,10 +14,26 @@ from pandas import Series
 
 from pytfa.utils.logger import get_bistream_logger
 
-# EPSILON = 1e-2
 max_flux = 1000
 default_uptake = 10
 special_uptakes = {'EX_glc__D_e': default_uptake, 'EX_o2_e': 18.5, 'EX_cbl1_e': 0.1}
+
+
+def get_combined_condition(conditions):
+    combined_met_ids = []
+    combined_conditions = []
+    i = 0
+    for _, value in conditions.items():
+        if i % 2 == 1:
+            if isinstance(met_id, str):
+                combined_met_ids.append(met_id)
+                if np.isnan(value):
+                    value = default_uptake
+                combined_conditions.append((met_id, value))
+        else:
+            met_id = value
+        i += 1
+    return '-'.join(combined_met_ids), combined_conditions
 
 
 class FBAModel:
@@ -49,11 +67,11 @@ class FBAModel:
     def solve(self, alg='fba', decimals=2, sampling_n=0, conditions=pd.DataFrame([])):
         self.logger.info('<< Condition: Control >>')
         results = self._calc_fluxes(alg, sampling_n).rename("control").to_frame()
-        for _, condition in conditions.iterrows():
-            condition = condition.dropna()
-            c_name = '-'.join(condition)
+        conditions = conditions.apply(get_combined_condition, axis=1)
+        for _, combined_condition in conditions.items():
+            c_name = combined_condition[0]
             self.logger.info(f'<< Condition: {c_name} >>')
-            self._modify_model(condition)
+            self._modify_model(combined_condition[1])
             results = pd.concat([results, self._calc_fluxes(alg, sampling_n).rename(c_name)], axis=1)
             self._revert_model()
         results = results[(results >= 10 ** -decimals).any(axis=1) | (results.index == self.biomass_reaction)]
@@ -90,15 +108,15 @@ class FBAModel:
             self.logger.error(f'{str(e).capitalize()}')
             return Series([], dtype=object)
 
-    def _modify_model(self, condition):
-        for met_id in condition:
+    def _modify_model(self, combined_condition):
+        for met_id, value in combined_condition:
             e_met_id = met_id + '_e'
             if self.model.metabolites.has_id(e_met_id):
                 e_react_id = 'EX_' + e_met_id
                 if self.model.reactions.has_id(e_react_id):
                     e_reaction = self.model.reactions.get_by_id(e_react_id)
                     self.reserved_bounds[e_reaction.id] = e_reaction.bounds
-                    e_reaction.bounds = -default_uptake, max_flux
+                    e_reaction.bounds = -value, max_flux
             else:
                 self.logger.warning(f"There is no metabolite {e_met_id}")
 
@@ -121,8 +139,5 @@ if __name__ == '__main__':
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fba_model = FBAModel(model_code='ecoli:iML1515')
     fba_model.solve().to_csv('output/fba_fluxes.csv')
-    # fba_model.solve(decimals=1).to_csv('output/fba_fluxes_0.1.csv')
     fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
         'output/pfba_fluxes_batch.csv')
-    # fba_model.solve(alg='pfba', decimals=1, conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-    #     'output/pfba_fluxes_batch_0.1.csv')

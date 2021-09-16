@@ -8,8 +8,8 @@ from cobra import Metabolite, Reaction, Gene
 from etfl.core.allocation import add_interpolation_variables, add_protein_mass_requirement, add_rna_mass_requirement, \
     add_dna_mass_requirement
 from etfl.core.rna import mRNA
-from fba_model import FBAModel
 from mscproject.simulation.data import data_dir
+from mscproject.simulation.fba_model import FBAModel
 from pytfa.io import load_thermoDB, read_lexicon, annotate_from_lexicon, read_compartment_data, apply_compartment_data
 from pytfa.optim.relaxation import relax_dgo
 from etfl.core import ThermoMEModel, MEModel

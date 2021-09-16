@@ -3,7 +3,7 @@ import pandas as pd
 from mscproject.simulation.fba_model import FBAModel
 
 
-def check_metabolites(model_code='ecoli:iJO1366'):
+def run(model_code='ecoli:iJO1366'):
     model = FBAModel(model_code).model
     conditions = pd.read_csv('perturbations.csv')
 
@@ -34,5 +34,5 @@ def check_metabolites(model_code='ecoli:iJO1366'):
 
 
 if __name__ == '__main__':
-    check_metabolites()
-    check_metabolites('ecoli:iML1515')
+    run()
+    run('ecoli:iML1515')
