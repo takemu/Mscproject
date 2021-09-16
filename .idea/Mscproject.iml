@@ -6,5 +6,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="pytfa" />
     <orderEntry type="module" module-name="etfl" />
+    <orderEntry type="module" module-name="etfl" />
+    <orderEntry type="module" module-name="pytfa" />
   </component>
 </module>
