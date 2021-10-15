@@ -19,21 +19,21 @@ default_uptake = 10
 special_uptakes = {'EX_glc__D_e': default_uptake, 'EX_o2_e': 18.5, 'EX_cbl1_e': 0.1}
 
 
-def get_combined_condition(conditions):
-    combined_met_ids = []
-    combined_conditions = []
+def reformat_condition(condition):
+    met_ids = []
+    met_conditions = []
     i = 0
-    for _, value in conditions.items():
+    for _, value in condition.items():
         if i % 2 == 1:
             if isinstance(met_id, str):
-                combined_met_ids.append(met_id)
+                met_ids.append(met_id)
                 if np.isnan(value):
                     value = default_uptake
-                combined_conditions.append((met_id, value))
+                met_conditions.append((met_id, value))
         else:
             met_id = value
         i += 1
-    return '-'.join(combined_met_ids), combined_conditions
+    return '-'.join(met_ids), met_conditions
 
 
 class FBAModel:
@@ -67,11 +67,11 @@ class FBAModel:
     def solve(self, alg='fba', decimals=2, sampling_n=0, conditions=pd.DataFrame([])):
         self.logger.info('<< Condition: Control >>')
         results = self._calc_fluxes(alg, sampling_n).rename("control").to_frame()
-        conditions = conditions.apply(get_combined_condition, axis=1)
-        for _, combined_condition in conditions.items():
-            c_name = combined_condition[0]
+        conditions = conditions.apply(reformat_condition, axis=1)
+        for _, (c_name, condition) in conditions.items():
+            # c_name = combined_condition[0]
             self.logger.info(f'<< Condition: {c_name} >>')
-            self._modify_model(combined_condition[1])
+            self._modify_model(condition)
             results = pd.concat([results, self._calc_fluxes(alg, sampling_n).rename(c_name)], axis=1)
             self._revert_model()
         results = results[(results >= 10 ** -decimals).any(axis=1) | (results.index == self.biomass_reaction)]
@@ -108,8 +108,8 @@ class FBAModel:
             self.logger.error(f'{str(e).capitalize()}')
             return Series([], dtype=object)
 
-    def _modify_model(self, combined_condition):
-        for met_id, value in combined_condition:
+    def _modify_model(self, condition):
+        for met_id, value in condition:
             e_met_id = met_id + '_e'
             if self.model.metabolites.has_id(e_met_id):
                 e_react_id = 'EX_' + e_met_id

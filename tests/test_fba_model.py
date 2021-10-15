@@ -76,22 +76,50 @@ class TestFBAModel(unittest.TestCase):
         solution.columns = baseline.columns
         self.assertTrue(solution.equals(baseline))
 
+    # def test_pfba_duplicates(self):
+    #     tasks = ['yangs_data', 'pfba_batch', 'pfba_batch_iml1515']
+    #     for task in tasks:
+    #         batch_data = pd.read_csv(f'baseline/{task}.csv', index_col=0)
+    #         print(f'<< {task} >>')
+    #         duplicates = batch_data['control']
+    #         count = 0
+    #         for col_name, column in batch_data.iloc[:, 1:].iteritems():
+    #             if np.isclose(column, batch_data['control'], atol=1.e-1).all():
+    #                 duplicates = pd.concat([duplicates, batch_data[col_name]], axis=1)
+    #                 count += 1
+    #         print('Duplicate columns to \"control\":')
+    #         print(', '.join(list(duplicates.iloc[:, 1:].columns)))
+    #         print('Total:', count)
+    #         duplicates = duplicates[(duplicates.T != 0).any()]
+    #         duplicates.to_csv(f'output/duplicates_{task}.csv')
+
     def test_pfba_duplicates(self):
         tasks = ['yangs_data', 'pfba_batch', 'pfba_batch_iml1515']
         for task in tasks:
             batch_data = pd.read_csv(f'baseline/{task}.csv', index_col=0)
+            batch_data = batch_data.round(decimals=1)
             print(f'<< {task} >>')
-            duplicates = batch_data['control']
-            count = 0
-            for col_name, column in batch_data.iloc[:, 1:].iteritems():
-                if np.isclose(column, batch_data['control'], atol=1.e-1).all():
-                    duplicates = pd.concat([duplicates, batch_data[col_name]], axis=1)
-                    count += 1
-            print('Duplicate columns to \"control\":')
-            print(', '.join(list(duplicates.iloc[:, 1:].columns)))
-            print('Total:', count)
-            duplicates = duplicates[(duplicates.T != 0).any()]
-            duplicates.to_csv(f'output/duplicates_{task}.csv')
+            duplicate_set = set()
+            duplicates = []
+            pivot_cols_w_dup = []
+            for i in range(batch_data.shape[1]):
+                pivot_col = batch_data.iloc[:, i]
+                col_duplicates = []
+                for j in range(i + 1, batch_data.shape[1]):
+                    col = batch_data.iloc[:, j]
+                    if np.isclose(pivot_col, col, atol=1.e-1).all():
+                        col_name = batch_data.columns.values[j]
+                        if col_name not in duplicate_set:
+                            duplicate_set.add(batch_data.columns.values[j])
+                            col_duplicates.append(col_name)
+                if len(col_duplicates) > 0:
+                    pivot_cols_w_dup.append(batch_data.columns.values[i])
+                    duplicates.append(col_duplicates)
+            duplicate_df = pd.DataFrame(duplicates).T.set_axis(pivot_cols_w_dup, axis=1)
+            duplicate_df.index += 1
+            duplicate_df.to_csv(f'output/duplicates_{task}.csv')
+            print('Total duplicates:', len(duplicate_set))
+            self.assertTrue(len(duplicate_set) <= 70)
 
     def test_align_to_yangs(self):
         yangs_data = pd.read_csv('baseline/yangs_data.csv', index_col=0).round(decimals=2)
