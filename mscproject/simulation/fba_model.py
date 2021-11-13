@@ -137,7 +137,7 @@ class FBAModel:
 
 if __name__ == '__main__':
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fba_model = FBAModel(model_code='ecoli:iML1515')
-    fba_model.solve().to_csv('output/fba_fluxes.csv')
-    fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-        'output/pfba_fluxes_batch.csv')
+    fba_model = FBAModel(model_code='ecoli:iML1515', min_biomass=0.1)
+    # fba_model.solve().to_csv('output/fba_fluxes.csv')
+    fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/pfba_fluxes.csv')
+    fba_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv('output/glc_pfba_fluxes.csv')

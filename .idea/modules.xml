@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../DECRES/.idea/DECRES.iml" filepath="$PROJECT_DIR$/../DECRES/.idea/DECRES.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Mscproject.iml" filepath="$PROJECT_DIR$/.idea/Mscproject.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../PyProjects/etfl/.idea/etfl.iml" filepath="$PROJECT_DIR$/../../PyProjects/etfl/.idea/etfl.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../PyProjects/pytfa/.idea/pytfa.iml" filepath="$PROJECT_DIR$/../../PyProjects/pytfa/.idea/pytfa.iml" />

@@ -8,5 +8,6 @@
     <orderEntry type="module" module-name="etfl" />
     <orderEntry type="module" module-name="etfl" />
     <orderEntry type="module" module-name="pytfa" />
+    <orderEntry type="module" module-name="DECRES" />
   </component>
 </module>

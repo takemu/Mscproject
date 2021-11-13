@@ -1,3 +1,4 @@
+import sys
 import time
 from os.path import join
 
@@ -171,18 +172,20 @@ class ETFLModel(FBAModel):
 
 
 if __name__ == '__main__':
-    etfl_model = ETFLModel(model_code='ecoli:iML1515')
+    etfl_model = ETFLModel(model_code='ecoli:iML1515', min_biomass=0.1)
 
-    start_time = time.time()
-    etfl_model.solve().to_csv('output/etfl_fluxes.csv')
-    print(f"Solving a ETFL model costs {time.time() - start_time:.2f} seconds!")
+    if sys.argv[1] == 'glc':
+        # start_time = time.time()
+        # etfl_model.solve().to_csv('output/etfl_fluxes.csv')
+        # print(f"Solving a ETFL model costs {time.time() - start_time:.2f} seconds!")
+        etfl_model.solve(conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv('output/glc_etfl_fluxes.csv')
+    elif 'slice' in sys.argv[1]:
+        # start_time = time.time()
+        etfl_model.solve(conditions=pd.read_csv(f'data/perturbations/_{sys.argv[1]}.csv')).to_csv(
+            f'output/etfl_fluxes/_{sys.argv[1]}.csv')
+        # print(f"Solving all etfl cases costs {time.time() - start_time:.2f} seconds!")
 
-    start_time = time.time()
-    etfl_model.solve(conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-        'output/etfl_fluxes_batch.csv')
-    print(f"Solving all etfl cases costs {time.time() - start_time:.2f} seconds!")
-
-    start_time = time.time()
-    etfl_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-        'output/petfl_fluxes_batch.csv')
-    print(f"Solving all petfl cases costs {time.time() - start_time:.2f} seconds!")
+    # start_time = time.time()
+    # etfl_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv(
+    #     'output/petfl_fluxes_batch.csv')
+    # print(f"Solving all petfl cases costs {time.time() - start_time:.2f} seconds!")
