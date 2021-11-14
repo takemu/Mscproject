@@ -4,7 +4,7 @@ import pandas as pd
 from optlang.exceptions import SolverError
 
 from mscproject.simulation.data import data_dir
-from mscproject.simulation.fba_model import FBAModel
+from mscproject.simulation.fba_model import FBAModel, pfba_biomass
 from pytfa import ThermoModel
 from pytfa.io import load_thermoDB, read_lexicon, read_compartment_data, annotate_from_lexicon, apply_compartment_data
 from pytfa.optim import relax_dgo
@@ -44,9 +44,8 @@ class TFAModel(FBAModel):
 
 if __name__ == '__main__':
     tfa_model = TFAModel(model_code='ecoli:iML1515', min_biomass=0.1)
-    # tfa_model.solve().to_csv('output/tfa_fluxes.csv')
-    # tfa_model.solve(decimals=1).to_csv('output/tfa_fluxes_0.1.csv')
-    tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/ptfa_fluxes.csv')
-    # tfa_model.solve(alg='pfba', decimals=1, conditions=pd.read_csv('data/perturbations.csv')).to_csv(
-    #     'output/ptfa_fluxes_batch_0.1.csv')
-    tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv('output/glc_ptfa_fluxes.csv')
+    # tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/ptfa_fluxes.csv')
+    # min_biomass = [0.1 * bm for bm in pfba_biomass]
+    # print(min_biomass)
+    tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv(
+        'output/glc_ptfa_fluxes.csv')

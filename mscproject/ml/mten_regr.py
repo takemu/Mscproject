@@ -60,37 +60,56 @@ class MultiTaskElasticNetRegression:
         plt.show()
 
 
-def our_data():
-    X = pd.read_csv(join(data_dir, 'ptfa_fluxes.csv'), index_col=0)
+def validate(name='ptfa', cv=100):
+    X = pd.read_csv(join(data_dir, f'{name}_fluxes.csv'), index_col=0)
     X = X[:-1].T.fillna(0)
     Y = pd.read_csv(join(data_dir, 'log_IC50.csv'), index_col=0)
-    mtenr = MultiTaskElasticNetRegression(cv=100)
+    mtenr = MultiTaskElasticNetRegression(cv=cv)
 
-    # mtenr.fit(X, Y)
-    # mtenr.validate(X, Y, 'Orignal')
-    #
-    # X, Y = remove_duplicated1(X, Y)
-    # mtenr.fit(X, Y)
-    # mtenr.validate(X, Y, 'Remove duplicated conditions')
-    #
-    # X, Y = remove_duplicated2(X, Y)
-    # results = mtenr.fit(X, Y)
-    # mtenr.validate(X, Y, 'Remove conditions where metabolic fluxes are identical with Control')
+    mtenr.fit(X, Y)
+    mtenr.validate(X, Y, 'Orignal')
 
-    X, Y = remove_duplicated(X, Y)
-    results = mtenr.fit(X, Y)
-    results.to_csv('output/our_coefs.csv')
+    X, Y = remove_duplicated1(X, Y)
+    mtenr.fit(X, Y)
+    mtenr.validate(X, Y, 'Remove duplicated conditions')
+
+    X, Y = remove_duplicated2(X, Y)
+    mtenr.fit(X, Y)
+    mtenr.validate(X, Y, 'Remove conditions where metabolic fluxes are identical with Control')
 
 
-def yangs_data():
-    X = pd.read_csv(join(data_dir, 'yangs_data.csv'), index_col=0)
+# def ptfa_data():
+#     X = pd.read_csv(join(data_dir, 'ptfa_fluxes.csv'), index_col=0)
+#     X = X[:-1].T.fillna(0)
+#     Y = pd.read_csv(join(data_dir, 'log_IC50.csv'), index_col=0)
+#     mtenr = MultiTaskElasticNetRegression(cv=100)
+#
+#     # mtenr.fit(X, Y)
+#     # mtenr.validate(X, Y, 'Orignal')
+#     #
+#     # X, Y = remove_duplicated1(X, Y)
+#     # mtenr.fit(X, Y)
+#     # mtenr.validate(X, Y, 'Remove duplicated conditions')
+#     #
+#     # X, Y = remove_duplicated2(X, Y)
+#     # results = mtenr.fit(X, Y)
+#     # mtenr.validate(X, Y, 'Remove conditions where metabolic fluxes are identical with Control')
+#
+#     X, Y = remove_duplicated(X, Y)
+#     results = mtenr.fit(X, Y)
+#     results.to_csv('output/ptfa_coefs.csv')
+
+
+def test(name='ptfa', cv=100):
+    X = pd.read_csv(join(data_dir, f'{name}_fluxes.csv'), index_col=0)
     X = X[:-1].T.fillna(0)
     Y = pd.read_csv(join(data_dir, 'log_IC50.csv'), index_col=0)
-    mtenr = MultiTaskElasticNetRegression(cv=50)
+    mtenr = MultiTaskElasticNetRegression(cv=cv)
     results = mtenr.fit(X, Y)
-    results.to_csv('output/yangs_coefs.csv')
+    results.to_csv(f'output/{name}_coefs.csv')
 
 
 if __name__ == '__main__':
-    our_data()
-    yangs_data()
+    test('pfba', 100)
+    test('ptfa', 100)
+    test('yangs', 50)

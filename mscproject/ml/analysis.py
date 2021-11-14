@@ -4,11 +4,11 @@ import pandas as pd
 from cobra.io import load_json_model
 
 
-def analyze(data='our', model='iML1515'):
-    coefs = pd.read_csv(f'output/{data}_coefs.csv', index_col=0)
+def analyze(name='ptfa', model='iML1515'):
+    coefs = pd.read_csv(f'output/{name}_coefs.csv', index_col=0)
     coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
-    coefs = coefs[(coefs > 0).any(axis=1)]
-    coefs.to_csv(f'output/{data}_results.csv')
+    coefs = coefs[(coefs > 0).all(axis=1)]
+    coefs.to_csv(f'output/{name}_results.csv')
     model = load_json_model(os.path.dirname(os.path.abspath(__file__)) + f'/../simulation/data/ecoli/{model}.json')
 
     reactions = []
@@ -26,9 +26,10 @@ def analyze(data='our', model='iML1515'):
     results = pd.DataFrame(reactions, columns=['id', 'kegg.reaction', 'subsystem'])
     results = results[~(results['kegg.reaction'] == '')].set_index('id')
     results = results[~results.index.duplicated()]
-    results.to_csv(f'output/{data}_results.csv')
+    results.to_csv(f'output/{name}_results.csv')
 
 
 if __name__ == '__main__':
-    analyze()
+    analyze('pfba')
+    analyze('ptfa')
     analyze('yangs', 'iJO1366')

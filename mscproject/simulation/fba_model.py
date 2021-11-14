@@ -18,6 +18,8 @@ max_flux = 1000
 default_uptake = 10
 special_uptakes = {'EX_glc__D_e': default_uptake, 'EX_o2_e': 18.5, 'EX_cbl1_e': 0.1}
 
+pfba_biomass = [0, 0.15, 0.25, 0.34, 0.43, 0.52, 0.61, 0.7, 0.75, 0.78, 0.82, 0.85, 0.89, 0.92, 0.94]
+
 
 def reformat_condition(condition):
     met_ids = []
@@ -64,13 +66,18 @@ class FBAModel:
                 e_reaction = self.model.reactions.get_by_id(e_react_id)
                 e_reaction.lower_bound = -uptake
 
-    def solve(self, alg='fba', decimals=2, sampling_n=0, conditions=pd.DataFrame([])):
+    def solve(self, alg='fba', decimals=2, sampling_n=0, conditions=pd.DataFrame([]), min_biomass=[]):
+        if len(min_biomass) > 0:
+            assert (conditions.shape[0] == len(min_biomass))
         self.logger.info('<< Condition: Control >>')
         results = self._calc_fluxes(alg, sampling_n).rename("control").to_frame()
         conditions = conditions.apply(reformat_condition, axis=1)
-        for _, (c_name, condition) in conditions.items():
+        for i, (c_name, condition) in conditions.items():
             # c_name = combined_condition[0]
             self.logger.info(f'<< Condition: {c_name} >>')
+            if len(min_biomass) > 0:
+                self.model.reactions.get_by_id(self.biomass_reaction).lower_bound = min_biomass[i]
+                self.logger.info(f'Biomass LB: {min_biomass[i]}')
             self._modify_model(condition)
             results = pd.concat([results, self._calc_fluxes(alg, sampling_n).rename(c_name)], axis=1)
             self._revert_model()
@@ -139,5 +146,5 @@ if __name__ == '__main__':
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fba_model = FBAModel(model_code='ecoli:iML1515', min_biomass=0.1)
     # fba_model.solve().to_csv('output/fba_fluxes.csv')
-    fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/pfba_fluxes.csv')
+    # fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/pfba_fluxes.csv')
     fba_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv('output/glc_pfba_fluxes.csv')
