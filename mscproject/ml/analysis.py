@@ -4,10 +4,10 @@ import pandas as pd
 from cobra.io import load_json_model
 
 
-def analyze(name='ptfa', model='iML1515'):
+def analyze(name='ptfa', model='iML1515', threshold=20):
     coefs = pd.read_csv(f'output/{name}_coefs.csv', index_col=0)
     coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
-    coefs = coefs[(coefs > 0).all(axis=1)]
+    coefs = coefs[(coefs > threshold).all(axis=1)]
     coefs.to_csv(f'output/{name}_results.csv')
     model = load_json_model(os.path.dirname(os.path.abspath(__file__)) + f'/../simulation/data/ecoli/{model}.json')
 
@@ -27,9 +27,10 @@ def analyze(name='ptfa', model='iML1515'):
     results = results[~(results['kegg.reaction'] == '')].set_index('id')
     results = results[~results.index.duplicated()]
     results.to_csv(f'output/{name}_results.csv')
+    results['kegg.reaction'].to_csv(f'output/{name}_results.txt', sep=' ', index=False, header=False)
 
 
 if __name__ == '__main__':
-    analyze('pfba')
-    analyze('ptfa')
-    analyze('yangs', 'iJO1366')
+    analyze('yangs_lr', 'iJO1366')
+    analyze('ptfa_lr')
+    analyze('ptfa_mlp')

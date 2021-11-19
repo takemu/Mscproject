@@ -148,3 +148,7 @@ if __name__ == '__main__':
     # fba_model.solve().to_csv('output/fba_fluxes.csv')
     # fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/pfba_fluxes.csv')
     fba_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv('output/glc_pfba_fluxes.csv')
+
+    # fba_model = FBAModel(model_code='ecoli:iJO1366', min_biomass=0.1)
+    # fba_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/pfba_iJO1366_fluxes.csv')
+    # fba_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv('output/glc_pfba_iJO1366_fluxes.csv')
