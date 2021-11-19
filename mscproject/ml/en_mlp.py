@@ -18,12 +18,12 @@ def compute_l2_loss(w):
 
 class ElasticNetMLP(nn.Module):
 
-    def __init__(self, d_input, d_hidden, d_output, act_func='relu', opt_alg='sgd-adam', max_iter=1000, step_size=0.05,
+    def __init__(self, d_input, d_hidden, d_output, act_func='relu', opt_alg='sgd-adam', max_iter=1000, step_size=1e-3,
                  minibatch_size=100, l1_ratio=0.5, alpha=0.05):
         super().__init__()
         self.mlp = MLP(d_input, d_hidden, d_output, act_func, opt_alg, max_iter, step_size, minibatch_size)
         self.weights = nn.Parameter(torch.zeros([1, d_input]))
-        self.optimizer = torch.optim.Adam(self.parameters())
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=step_size)
         self.loss_func = torch.nn.MSELoss()
         self.max_iter = max_iter
         self.l1_ratio = l1_ratio
