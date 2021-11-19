@@ -13,7 +13,7 @@ from mscproject.ml.mten_regr import remove_duplicated1
 
 
 class ElasticNetMLPCV(ElasticNetMLP):
-    def __init__(self, d_input, d_hidden, d_output, act_func='relu', opt_alg='sgd-adam', max_iter=1000, step_size=0.05,
+    def __init__(self, d_input, d_hidden, d_output, act_func='relu', opt_alg='sgd-adam', max_iter=1000, step_size=1e-3,
                  minibatch_size=100, l1_ratio=0.5, alpha=0.05, cv=10):
         super().__init__(d_input, d_hidden, d_output, act_func, opt_alg, max_iter, step_size, minibatch_size, l1_ratio,
                          alpha)
