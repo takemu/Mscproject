@@ -1,141 +1,83 @@
 import time
+from os.path import join
 
-import torch
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import torch
+from matplotlib import pyplot as plt
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import KFold
+
+from mscproject.ml.data import data_dir
+from mscproject.ml.en_mlp import ElasticNetMLP
+from mscproject.ml.mten_regr import remove_duplicated1
 
 
-class MLP2(torch.nn.Module):
-    def __init__(self, d_input, d_hidden, d_output, act_func='sigmoid', opt_alg='gd-adam', max_iter=100, step_size=0.1,
-                 minibatch_size=100):
-        super().__init__()
-        if isinstance(d_hidden, int):
-            d_hidden = [d_hidden]
-        self.input_linear = torch.nn.Linear(d_input, d_hidden[0])
-        self.n_hidden = len(d_hidden)
-        self.hidden_linear = []
-        if self.n_hidden > 1:
-            for i in range(1, self.n_hidden):
-                self.hidden_linear.append(torch.nn.Linear(d_hidden[i - 1], d_hidden[i]))
-        self.output_linear = torch.nn.Linear(d_hidden[-1], d_output)
+class ElasticNetMLPCV(ElasticNetMLP):
+    def __init__(self, d_input, d_hidden, d_output, act_func='relu', opt_alg='sgd-adam', max_iter=1000, step_size=0.05,
+                 minibatch_size=100, l1_ratio=0.5, alpha=0.05, cv=10):
+        super().__init__(d_input, d_hidden, d_output, act_func, opt_alg, max_iter, step_size, minibatch_size, l1_ratio,
+                         alpha)
+        self.cv = cv
 
-        self.act_func = act_func
-        self.opt_alg = opt_alg
-        self.max_iter = max_iter
-        self.minibatch_size = minibatch_size
-
-        self.relu = torch.nn.ReLU()
-        self.sigmoid = torch.nn.Sigmoid()
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=step_size)
-        self.loss_func = torch.nn.MSELoss()
-
-    def activation(self, z):
-        if self.act_func.lower() == 'sigmoid':
-            return self.sigmoid(z)
-        elif self.act_func.lower() == 'relu':
-            return self.relu(z)
-        else:
-            return z
-
-    def total_loss(self, target_y, output_y, method='mean'):
-        if method == 'mean':
-            return torch.mean(0.5 * torch.sum((output_y - target_y) ** 2, axis=1))
-        else:
-            return torch.sum(0.5 * torch.sum((output_y - target_y) ** 2, axis=1))
-
-    def forward(self, input_x):
-        hidden_z = self.activation(self.input_linear(input_x))
-        if self.n_hidden > 1:
-            for i in range(0, self.n_hidden - 1):
-                hidden_z = self.activation(self.hidden_linear[i](hidden_z))
-        output_y = self.output_linear(hidden_z)
-        return output_y
-
-    def gd_adam(self, train_x, train_y, valid_x, valid_y):
-        train_loss_hist = []
-        valid_loss_hist = []
-
-        for t in range(self.max_iter):
-            fitted_train_y = self.forward(train_x)
-            train_loss_hist.append(self.total_loss(train_y, fitted_train_y))
-            if len(valid_y) > 0:
-                fitted_valid_y = self.forward(valid_x)
-                valid_loss_hist.append(self.total_loss(valid_y, fitted_valid_y))
-            self.optimizer.zero_grad()
-            self.loss_func(fitted_train_y, train_y).backward()
-            self.optimizer.step()
-
-        return train_loss_hist, valid_loss_hist
-
-    def sgd_adam(self, train_x, train_y, valid_x, valid_y):
-        train_loss_hist = []
-        valid_loss_hist = []
-        n_minibatches = max(int(len(train_x) / self.minibatch_size), 1)
-        for t in range(self.max_iter):
-            total_mb_loss = 0
-            for j in range(n_minibatches):
-                mb_pos = j * self.minibatch_size
-                mb_x, mb_y = train_x[mb_pos:mb_pos + self.minibatch_size], train_y[mb_pos:mb_pos + self.minibatch_size]
-                fitted_mb_y = self.forward(mb_x)
-                total_mb_loss += self.total_loss(mb_y, fitted_mb_y)
-                self.optimizer.zero_grad()
-                self.loss_func(fitted_mb_y, mb_y).backward()
-                self.optimizer.step()
-            train_loss_hist.append(total_mb_loss / n_minibatches)
-            if len(valid_y) > 0:
-                fitted_valid_y = self.forward(valid_x)
-                valid_loss_hist.append(self.total_loss(valid_y, fitted_valid_y))
-
-        return train_loss_hist, valid_loss_hist
-
-    def train(self, train_x, train_y, valid_x=[], valid_y=[]):
-        if train_y.ndim == 1:
-            train_y = train_y.reshape(len(train_y), 1)
-        if len(valid_y) > 0 and valid_y.ndim == 1:
-            valid_y = valid_y.reshape(len(valid_y), 1)
-
-        if self.opt_alg.lower() == 'gd-adam':
-            return self.gd_adam(train_x, train_y, valid_x, valid_y)
-        elif self.opt_alg.lower() == 'sgd-adam':
-            return self.sgd_adam(train_x, train_y, valid_x, valid_y)
-        else:
-            return [], []
+    def train(self, X, Y):
+        kf = KFold(n_splits=self.cv)
+        for t, v in kf.split(X):
+            # train_X, train_Y, valid_X, valid_Y = X[t], train_Y[t], valid_X[v], valid_Y[v]
+            train_X = torch.from_numpy(X.iloc[t, :].values).float()
+            train_Y = torch.from_numpy(Y.iloc[t, :].values).float()
+            valid_X = torch.from_numpy(X.iloc[v, :].values).float()
+            valid_Y = torch.from_numpy(Y.iloc[v, :].values).float()
+            super().train(train_X, train_Y, valid_X, valid_Y)
 
 
-def load_data2():
-    train_df = pd.read_csv('problem2_train.csv', header=None)
-    valid_df = pd.read_csv('problem2_valid.csv', header=None)
-    train_x = torch.from_numpy(train_df.iloc[:, 0:10].values).float()
-    train_y = torch.from_numpy(train_df.iloc[:, 10].values[:, np.newaxis]).float()
-    valid_x = torch.from_numpy(valid_df.iloc[:, 0:10].values).float()
-    valid_y = torch.from_numpy(valid_df.iloc[:, 10].values[:, np.newaxis]).float()
-    return train_x, train_y, valid_x, valid_y
+# def split_data(X, Y):
+#     n_test = X.shape[0] // 10 * 8
+#     train_X = torch.from_numpy(X.iloc[:n_test, :].values).float()
+#     train_Y = torch.from_numpy(Y.iloc[:n_test, :].values).float()
+#     valid_X = torch.from_numpy(X.iloc[n_test:X.shape[0], :].values).float()
+#     valid_Y = torch.from_numpy(Y.iloc[n_test:X.shape[0], :].values).float()
+#     return train_X, train_Y, valid_X, valid_Y
 
 
-def test():
-    d_input, d_hidden, d_output = 10, 15, 1
-    step_size = 0.001
-    minibatch_size = 1000
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6), dpi=100)
-
-    train_x, train_y, valid_x, valid_y = load_data2()
-    mlp = MLP2(d_input, d_hidden, d_output, act_func='sigmoid', opt_alg='sgd-adam',
-               max_iter=MAX_EPOCH, step_size=step_size, minibatch_size=minibatch_size)
-    st = time.time()
-    train_loss, valid_loss = mlp.train(train_x, train_y, valid_x, valid_y)
-    print(time.time() - st)
-    ax2.set_title(f"PyTorch MLP")
-    ax2.set_ylabel("Loss")
-    ax2.set_ylim(0, 1)
-    ax2.set_xlabel("Epoch")
-    ax2.plot(train_loss, label="Training loss")
-    ax2.plot(valid_loss, label="Validation loss")
-    ax2.legend()
-
+def show_result(Y, predicted_Y):
+    rmse = mean_squared_error(Y, predicted_Y)
+    r2 = r2_score(Y, predicted_Y)
+    fig, ax = plt.subplots()
+    ax.scatter(Y, predicted_Y, edgecolors=(0, 0, 0))
+    ax.plot([-2.8, 2.8], [-2.8, 2.8], '--', lw=2)
+    ax.set_xlabel("Measured")
+    ax.set_ylabel("Predicted")
+    # ax.set_title(f'\nRMSE = {rmse:.6f}\nR2 score = {r2:.6f}')
+    ax.text(-2.5, 2, f'RMSE = {rmse:.6f}\nR$^2$ score = {r2:.6f}')
+    plt.xlim([-2.9, 2.9])
+    plt.ylim([-2.9, 2.9])
     plt.show()
 
 
-MAX_EPOCH = 300
-if __name__ == "__main__":
-    test()
+def test(name='ptfa', rm_dup=True):
+    start_time = time.time()
+    X = pd.read_csv(join(data_dir, f'{name}_fluxes.csv'), index_col=0)
+    X = X[:-1].T.fillna(0)
+    Y = pd.read_csv(join(data_dir, 'log_IC50.csv'), index_col=0)
+    if rm_dup:
+        X, Y = remove_duplicated1(X, Y)
+
+    # train_X, train_Y, valid_X, valid_Y = split_data(X, Y)
+    d_input, d_hidden, d_output = X.shape[1], [50, 50, 50], Y.shape[1]
+    enmlp = ElasticNetMLPCV(d_input, d_hidden, d_output, opt_alg='gd-adam', max_iter=1000, alpha=0.05, cv=5)
+    enmlp.train(X, Y)
+    print(f"Training costs {time.time() - start_time:.2f} seconds!")
+
+    predicted_Y = enmlp.forward(torch.from_numpy(X.values).float()).detach().numpy()
+    show_result(Y, predicted_Y)
+    coefs = pd.DataFrame(enmlp.get_weights().detach().numpy().T.tolist(), columns=['All_IC50'], index=X.columns)
+    coefs = coefs.abs()
+    # coefs[coefs < 1e-4] = 0
+    coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
+    coefs = coefs.round(decimals=6)
+    coefs.to_csv("output/ptfa_mlp_coefs.csv")
+
+
+if __name__ == '__main__':
+    test('ptfa')
+
