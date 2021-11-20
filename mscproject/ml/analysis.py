@@ -4,11 +4,10 @@ import pandas as pd
 from cobra.io import load_json_model
 
 
-def analyze(name='ptfa', model='iML1515', threshold=20):
+def analyze(name='ptfa', model='iML1515', threshold=0):
     coefs = pd.read_csv(f'output/{name}_coefs.csv', index_col=0)
-    coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
+    # coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
     coefs = coefs[(coefs > threshold).all(axis=1)]
-    coefs.to_csv(f'output/{name}_results.csv')
     model = load_json_model(os.path.dirname(os.path.abspath(__file__)) + f'/../simulation/data/ecoli/{model}.json')
 
     reactions = []
@@ -26,11 +25,15 @@ def analyze(name='ptfa', model='iML1515', threshold=20):
     results = pd.DataFrame(reactions, columns=['id', 'kegg.reaction', 'subsystem'])
     results = results[~(results['kegg.reaction'] == '')].set_index('id')
     results = results[~results.index.duplicated()]
-    results.to_csv(f'output/{name}_results.csv')
-    results['kegg.reaction'].to_csv(f'output/{name}_results.txt', sep=' ', index=False, header=False)
+    results.to_csv(f'output/results/{name}_results_{threshold}.csv')
+    results['kegg.reaction'].to_csv(f'output/results/{name}_results_{threshold}.txt', sep=' ', index=False,
+                                    header=False)
 
 
 if __name__ == '__main__':
-    analyze('yangs_lr', 'iJO1366')
-    analyze('ptfa_lr')
-    analyze('ptfa_mlp')
+    analyze('yangs_lr', 'iJO1366', threshold=0)
+    analyze('ptfa_lr', threshold=0)
+    analyze('ptfa_mlp', threshold=0)
+    analyze('yangs_lr', 'iJO1366', threshold=0.5)
+    analyze('ptfa_lr', threshold=0.5)
+    analyze('ptfa_mlp', threshold=0.5)

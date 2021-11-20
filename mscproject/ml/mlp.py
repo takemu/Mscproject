@@ -1,14 +1,12 @@
 import os
-from os.path import join
 
-from mscproject.ml.data import data_dir
+from mscproject.ml.data import load_train_data, split_train_data, to_tensor
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 import time
 
 import torch
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
@@ -109,26 +107,14 @@ class MLP(torch.nn.Module):
             return [], []
 
 
-def load_data(name='ptfa'):
-    X = pd.read_csv(join(data_dir, f'{name}_fluxes.csv'), index_col=0)
-    X = X[:-1].T.fillna(0)
-    Y = pd.read_csv(join(data_dir, 'log_IC50.csv'), index_col=0)
-    n_test = X.shape[0] // 10 * 8
-    train_X = torch.from_numpy(X.iloc[:n_test, :].values).float()
-    train_y = torch.from_numpy(Y.iloc[:n_test, :].values).float()
-    valid_X = torch.from_numpy(X.iloc[n_test:X.shape[0], :].values).float()
-    valid_y = torch.from_numpy(Y.iloc[n_test:X.shape[0], :].values).float()
-    return train_X, train_y, valid_X, valid_y
-
-
 if __name__ == "__main__":
     st = time.time()
-
-    train_X, train_y, valid_X, valid_y = load_data()
-    d_input, d_hidden, d_output = train_X.shape[1], [30, 30, 30], train_y.shape[1]
+    X, y = load_train_data()
+    train_X, train_y, valid_X, valid_y = split_train_data(X, y)
+    d_input, d_hidden, d_output = train_X.shape[1], [50, 50, 50], train_y.shape[1]
     mlp = MLP(d_input, d_hidden, d_output)
-
-    train_loss, valid_loss = mlp.train(train_X, train_y, valid_X, valid_y)
+    train_loss, valid_loss = mlp.train(to_tensor(train_X), to_tensor(train_y), to_tensor(valid_X), to_tensor(valid_y))
+    print(f"Training cost {time.time() - st:2f} seconds!")
 
     f, ax = plt.subplots(1, 1, figsize=(6, 6), dpi=100)
     ax.set_title(f"PyTorch MLP")
@@ -139,5 +125,3 @@ if __name__ == "__main__":
     ax.plot([e.item() for e in valid_loss], label="Validation loss")
     ax.legend()
     plt.show()
-
-    print(f"Time elapsed {time.time() - st:2f} seconds!")
