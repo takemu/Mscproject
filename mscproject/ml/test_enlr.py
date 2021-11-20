@@ -91,24 +91,24 @@ from mscproject.ml.data import load_train_data, show_result, split_train_data
 #     results = mtenr.fit(X, Y)
 #     results.to_csv(f'output/{name}_lr_coefs.csv')
 
-# def test_enlrcv2(name='ptfa', rm_dup=True):
-#     st = time.time()
-#     X, y = load_train_data(name=name, rm_dup=rm_dup)
-#     train_X, train_y, test_X, test_y = split_train_data(X, y)
-#     enlr = linear_model.MultiTaskElasticNetCV(cv=50, max_iter=1e4, tol=1e6, alphas=[0.01, 0.05, 0.1])
-#     enlr.fit(train_X, train_y)
-#     print(f"Training cost {time.time() - st:2f} seconds!")
-#
-#     coefs = pd.DataFrame(enlr.coef_.T, columns=y.columns, index=X.columns)
-#     coefs = coefs.abs()
-#     coefs[coefs < 1e-4] = 0
-#     coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
-#     coefs = coefs.round(decimals=6)
-#     coefs = coefs.sort_values(by=['AMP_IC50', 'CIP_IC50', 'GENT_IC50'], ascending=False)
-#     coefs.to_csv(f"output/{name}_lr_coefs.csv")
-#
-#     predicted_y = enlr.predict(test_X)
-#     show_result(test_y, predicted_y)
+def test_enlrcv2(name='ptfa', rm_dup=True):
+    st = time.time()
+    X, y = load_train_data(name=name, rm_dup=rm_dup)
+    train_X, train_y, test_X, test_y = split_train_data(X, y)
+    enlr = linear_model.MultiTaskElasticNetCV(cv=10, max_iter=1e3, tol=1e6, alphas=[0.01, 0.05, 0.1])
+    enlr.fit(train_X, train_y)
+    print(f"Training cost {time.time() - st:2f} seconds!")
+
+    coefs = pd.DataFrame(enlr.coef_.T, columns=y.columns, index=X.columns)
+    coefs = coefs.abs()
+    coefs[coefs < 1e-4] = 0
+    coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
+    coefs = coefs.round(decimals=6)
+    coefs = coefs.sort_values(by=['AMP_IC50', 'CIP_IC50', 'GENT_IC50'], ascending=False)
+    coefs.to_csv(f"output/{name}_lr_coefs.csv")
+
+    predicted_y = enlr.predict(test_X)
+    show_result(test_y, predicted_y)
 
 
 def test_enlrcv(name='ptfa', rm_dup=True):
@@ -128,12 +128,13 @@ def test_enlrcv(name='ptfa', rm_dup=True):
 
     predicted_y = enlr.predict(X)
     show_result(y, predicted_y)
-    predicted_y = cross_val_predict(enlr, X, y, cv=10)
-    show_result(y, predicted_y)
+    # predicted_y = cross_val_predict(enlr, X, y, cv=10)
+    # show_result(y, predicted_y)
 
 
 if __name__ == '__main__':
-    # test_enlrcv('yangs', False)
-    # test_enlrcv('yangs')
-    # test_enlrcv('ptfa', False)
+    test_enlrcv('yangs', False)
+    test_enlrcv('yangs')
+    test_enlrcv('ptfa', False)
     test_enlrcv('ptfa')
+    test_enlrcv2('ptfa')

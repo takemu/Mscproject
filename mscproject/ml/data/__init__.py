@@ -38,7 +38,10 @@ def split_train_data(X, y, train_ratio=0.8):
 
 
 def to_tensor(x):
-    return torch.from_numpy(x.values).float()
+    if torch.is_tensor(x) or len(x) == 0:
+        return x
+    else:
+        return torch.from_numpy(x.values).float()
 
 
 def show_result(y, predicted_y):

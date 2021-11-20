@@ -44,9 +44,9 @@ class MLP(torch.nn.Module):
 
     def total_loss(self, target_y, output_y, method='mean'):
         if method == 'mean':
-            return torch.mean(0.5 * torch.sum((output_y - target_y) ** 2, axis=1))
+            return torch.mean(0.5 * torch.sum((output_y - target_y) ** 2, axis=1)).item()
         else:
-            return torch.sum(0.5 * torch.sum((output_y - target_y) ** 2, axis=1))
+            return torch.sum(0.5 * torch.sum((output_y - target_y) ** 2, axis=1)).item()
 
     def forward(self, input_x):
         hidden_z = self.activation(self.input_linear(input_x))
@@ -94,6 +94,10 @@ class MLP(torch.nn.Module):
         return train_loss_hist, valid_loss_hist
 
     def train(self, train_X, train_y, valid_X=[], valid_y=[]):
+        train_X = to_tensor(train_X)
+        train_y = to_tensor(train_y)
+        valid_X = to_tensor(valid_X)
+        valid_y = to_tensor(valid_y)
         if train_y.ndim == 1:
             train_y = train_y.reshape(len(train_y), 1)
         if len(valid_y) > 0 and valid_y.ndim == 1:
@@ -113,7 +117,7 @@ if __name__ == "__main__":
     train_X, train_y, valid_X, valid_y = split_train_data(X, y)
     d_input, d_hidden, d_output = train_X.shape[1], [50, 50, 50], train_y.shape[1]
     mlp = MLP(d_input, d_hidden, d_output)
-    train_loss, valid_loss = mlp.train(to_tensor(train_X), to_tensor(train_y), to_tensor(valid_X), to_tensor(valid_y))
+    train_loss, valid_loss = mlp.train(train_X, train_y, valid_X, valid_y)
     print(f"Training cost {time.time() - st:2f} seconds!")
 
     f, ax = plt.subplots(1, 1, figsize=(6, 6), dpi=100)
@@ -121,7 +125,7 @@ if __name__ == "__main__":
     ax.set_ylabel("Loss")
     ax.set_ylim(0, 1)
     ax.set_xlabel("Epoch")
-    ax.plot([e.item() for e in train_loss], label="Training loss")
-    ax.plot([e.item() for e in valid_loss], label="Validation loss")
+    ax.plot(train_loss, label="Training loss")
+    ax.plot(valid_loss, label="Validation loss")
     ax.legend()
     plt.show()

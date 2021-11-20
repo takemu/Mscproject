@@ -44,8 +44,8 @@ class TFAModel(FBAModel):
 
 if __name__ == '__main__':
     tfa_model = TFAModel(model_code='ecoli:iML1515', min_biomass=0.1)
-    # tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/ptfa_fluxes.csv')
+    tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/perturbations.csv')).to_csv('output/ptfa_fluxes.csv')
     # min_biomass = [0.1 * bm for bm in pfba_biomass]
     # print(min_biomass)
-    tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv(
-        'output/glc_ptfa_fluxes.csv')
+    # tfa_model.solve(alg='pfba', conditions=pd.read_csv('data/glc_uptakes.csv')).to_csv(
+    #     'output/glc_ptfa_fluxes.csv')

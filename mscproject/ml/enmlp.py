@@ -1,5 +1,7 @@
 import time
 
+import numpy as np
+import pandas as pd
 import torch
 from matplotlib import pyplot as plt
 from sklearn.model_selection import KFold
@@ -53,6 +55,10 @@ class ElasticNetMLP(MLP):
         return super().forward(weighted_X)
 
     def train(self, train_X, train_y, valid_X=[], valid_y=[]):
+        train_X = to_tensor(train_X)
+        train_y = to_tensor(train_y)
+        valid_X = to_tensor(valid_X)
+        valid_y = to_tensor(valid_y)
         super().train(train_X, train_y, valid_X, valid_y)
 
         train_loss_hist = []
@@ -69,7 +75,7 @@ class ElasticNetMLP(MLP):
         return train_loss_hist, valid_loss_hist
 
     def predict(self, X):
-        return self.forward(torch.from_numpy(X.values).float()).detach().numpy()
+        return pd.DataFrame(self.forward(to_tensor(X)).detach().numpy(), index=X.index)
 
     @property
     def weights(self):
@@ -77,22 +83,46 @@ class ElasticNetMLP(MLP):
         return self._weights.detach().numpy()  # .T.tolist()
 
 
-class ElasticNetMLPCV(ElasticNetMLP):
+class ElasticNetMLPCV():
     def __init__(self, d_input, d_hidden, d_output, act_func='relu', opt_alg='sgd-adam', max_iter=1000, step_size=1e-3,
-                 minibatch_size=100, l1_ratio=0.5, alpha=0.05, cv=10):
-        super().__init__(d_input, d_hidden, d_output, act_func, opt_alg, max_iter, step_size, minibatch_size, l1_ratio,
-                         alpha)
+                 minibatch_size=100, l1_ratio=0.5, alphas=0.05, cv=10):
+        # super().__init__(d_input, d_hidden, d_output, act_func, opt_alg, max_iter, step_size, minibatch_size, l1_ratio,
+        #                  alpha)
+        self.models = [
+            ElasticNetMLP(d_input, d_hidden, d_output, act_func, opt_alg, max_iter, step_size, minibatch_size, l1_ratio,
+                          alpha) for alpha in alphas]
+        # for alpha in alphas:
+        #     self.models.append(
+        #         ElasticNetMLP(d_input, d_hidden, d_output, act_func, opt_alg, max_iter, step_size, minibatch_size,
+        #                       l1_ratio, alpha))
+        self.model_losses = [0] * len(alphas)
         self.cv = cv
 
     def train(self, X, y):
-        kf = KFold(n_splits=self.cv)
-        for t, v in kf.split(X):
-            train_X = torch.from_numpy(X.iloc[t, :].values).float()
-            train_y = torch.from_numpy(y.iloc[t, :].values).float()
-            valid_X = torch.from_numpy(X.iloc[v, :].values).float()
-            valid_y = torch.from_numpy(y.iloc[v, :].values).float()
-            super().train(train_X, train_y, valid_X, valid_y)
-            predicted_y = super().predict(valid_X)
+        for i, model in enumerate(self.models):
+            kf = KFold(n_splits=self.cv)
+            loss = 0
+            for t, v in kf.split(X):
+                # train_X = torch.from_numpy(X.iloc[t, :].values).float()
+                # train_y = torch.from_numpy(y.iloc[t, :].values).float()
+                # valid_X = torch.from_numpy(X.iloc[v, :].values).float()
+                # valid_y = torch.from_numpy(y.iloc[v, :].values).float()
+                train_X = X.iloc[t, :]
+                train_y = y.iloc[t, :]
+                valid_X = X.iloc[v, :]
+                valid_y = y.iloc[v, :]
+                model.train(train_X, train_y)
+                predicted_y = model.predict(valid_X)
+                loss += model.total_loss(to_tensor(valid_y), to_tensor(predicted_y), method='sum')
+            self.model_losses[i] = loss / X.shape[0]
+            # print(self.model_losses[i])
+
+    def predict(self, X):
+        return self.models[np.argmin(self.model_losses)].predict(X)
+
+    @property
+    def weights(self):
+        return self.models[np.argmin(self.model_losses)].weights
 
 
 if __name__ == "__main__":
@@ -101,8 +131,7 @@ if __name__ == "__main__":
     train_X, train_y, valid_X, valid_y = split_train_data(X, y)
     d_input, d_hidden, d_output = train_X.shape[1], [50, 50, 50], train_y.shape[1]
     en_mlp = ElasticNetMLP(d_input, d_hidden, d_output)
-    train_loss, valid_loss = en_mlp.train(to_tensor(train_X), to_tensor(train_y), to_tensor(valid_X),
-                                          to_tensor(valid_y))
+    train_loss, valid_loss = en_mlp.train(train_X, train_y, valid_X, valid_y)
     print(f"Training cost {time.time() - st:2f} seconds!")
 
     f, ax = plt.subplots(1, 1, figsize=(6, 6), dpi=100)
@@ -110,7 +139,7 @@ if __name__ == "__main__":
     ax.set_ylabel("Loss")
     ax.set_ylim(0, 1)
     ax.set_xlabel("Epoch")
-    ax.plot([e.item() for e in train_loss], label="Training loss")
-    ax.plot([e.item() for e in valid_loss], label="Validation loss")
+    ax.plot(train_loss, label="Training loss")
+    ax.plot(valid_loss, label="Validation loss")
     ax.legend()
     plt.show()
