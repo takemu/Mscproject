@@ -8,19 +8,35 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
 
+iml1515_excluded_conditions = ['2obut', 'glx', 'glycogen', '4hbz', 'oxa', 'acglu', 'glu__D', 'citr__L', 'ppi', '2pg',
+                               '3pg', 'pep', '2pglyc', '6pgc', 'man1p', '3sala', 'cyst__L']
 
-def load_train_data(name='ptfa', rm_dup=True):
+ijo1366_excluded_conditions = iml1515_excluded_conditions + ['urate']
+
+control_identical_conditions = ijo1366_excluded_conditions + ['acgal', 'arbt', 'crn-crn__D', 'glc__D', 'hom__L',
+                                                              'inost', 'met__D', 'no2', 'no3', 'pi', 'so4', 'thym',
+                                                              'tsul', 'tym', 'urea']
+
+
+def load_train_data(name='ptfa', rm_dup=True, excludes=[]):
     X = pd.read_csv(join(data_dir, f'{name}_fluxes.csv'), index_col=0)
     X = X[:-1].T.fillna(0)
     y = pd.read_csv(join(data_dir, 'log_IC50.csv'), index_col=0)
     if rm_dup:
         X, y = remove_duplicates(X, y)
+        X, y = remove_conditions(X, y, excludes)
     return X, y
 
 
 def remove_duplicates(X, y):
     X = X.loc[~X.index.str.replace(r"(\.\d+)$", "", regex=True).duplicated(), :]
     y = y.loc[~y.index.str.replace(r"(\.\d+)$", "", regex=True).duplicated(), :]
+    return X, y
+
+
+def remove_conditions(X, y, conditions):
+    X = X.drop(conditions, axis=0)
+    y = y.drop(conditions, axis=0)
     return X, y
 
 
@@ -56,15 +72,3 @@ def show_result(y, predicted_y):
     plt.xlim([-2.9, 2.9])
     plt.ylim([-2.9, 2.9])
     plt.show()
-
-
-conditons_equal_control = ['2obut', '2pg', '2pglyc', '3pg', '3sala', '4hbz', '6pgc', 'acgal', 'acglu', 'arbt',
-                           'citr__L', 'crn-crn__D', 'cyst__L', 'glc__D', 'glu__D', 'glx', 'glycogen', 'hom__L', 'inost',
-                           'man1p', 'met__D', 'no2', 'no3', 'oxa', 'pep', 'pi', 'ppi', 'so4', 'thym', 'tsul', 'tym',
-                           'urate', 'urea']
-
-
-def remove_conditons_equal_control(X, Y):
-    X = X.drop(conditons_equal_control, axis=0)
-    Y = Y.drop(conditons_equal_control, axis=0)
-    return X, Y

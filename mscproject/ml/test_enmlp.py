@@ -1,8 +1,9 @@
 import time
 
+import numpy as np
 import pandas as pd
 
-from mscproject.ml.data import load_train_data, show_result, split_train_data
+from mscproject.ml.data import load_train_data, show_result, split_train_data, iml1515_excluded_conditions
 from mscproject.ml.enmlp import ElasticNetMLPCV
 
 
@@ -29,9 +30,9 @@ from mscproject.ml.enmlp import ElasticNetMLPCV
 #     show_result(test_y, predicted_y)
 
 
-def test_enmlpcv(name, rm_dup=True, train_ratio=1, times=1):
+def test_enmlpcv(name, rm_dup=True, excludes=iml1515_excluded_conditions, train_ratio=1, times=1):
     st = time.time()
-    X, y = load_train_data(name=name, rm_dup=rm_dup)
+    X, y = load_train_data(name=name, rm_dup=rm_dup, excludes=excludes)
     if train_ratio < 1:
         X, y, test_X, test_y = split_train_data(X, y, train_ratio=train_ratio)
     d_input, d_hidden, d_output = X.shape[1], [50, 50, 50], y.shape[1]
@@ -45,9 +46,10 @@ def test_enmlpcv(name, rm_dup=True, train_ratio=1, times=1):
     # coefs = pd.DataFrame(enmlp.weights.T, columns=['All_IC50'], index=X.columns)
     coefs = pd.DataFrame(coefs, columns=X.columns).mean(axis=0).T.rename('All_IC50')
     coefs = coefs.abs()
-    coefs[coefs < 1e-4] = 0
+    coefs = coefs[coefs >= 1e-4]
+    coefs = np.log10(coefs)
     coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
-    coefs = coefs.round(decimals=6)
+    coefs = coefs.round(decimals=2)
     coefs = coefs.sort_values(ascending=False)
     coefs.to_csv(f"output/{name}_mlp_coefs.csv")
 
@@ -60,6 +62,6 @@ def test_enmlpcv(name, rm_dup=True, train_ratio=1, times=1):
 
 
 if __name__ == '__main__':
-    # test_enmlpcv('yangs')
-    # test_enmlpcv('ptfa', times=10)
-    test_enmlpcv('ptfa', train_ratio=0.9)
+    test_enmlpcv(name='yangs', rm_dup=False, excludes=['galt', 'pser__L'])
+    test_enmlpcv(name='ptfa', train_ratio=0.9)
+    test_enmlpcv(name='ptfa', times=10)

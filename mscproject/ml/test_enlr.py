@@ -1,10 +1,11 @@
 import time
 
+import numpy as np
 import pandas as pd
 from sklearn import linear_model
 from sklearn.model_selection import cross_val_predict
 
-from mscproject.ml.data import load_train_data, show_result, split_train_data
+from mscproject.ml.data import load_train_data, show_result, split_train_data, iml1515_excluded_conditions
 
 
 # duplicated_names = ['2obut', '2pg', '2pglyc', '3pg', '3sala', '4hbz', '6pgc', 'acgal', 'acglu', 'arbt', 'citr__L',
@@ -111,9 +112,9 @@ from mscproject.ml.data import load_train_data, show_result, split_train_data
 #     show_result(test_y, predicted_y)
 
 
-def test_enlrcv(name, rm_dup=True, train_ratio=1):
+def test_enlrcv(name, rm_dup=True, excludes=iml1515_excluded_conditions, train_ratio=1):
     st = time.time()
-    X, y = load_train_data(name=name, rm_dup=rm_dup)
+    X, y = load_train_data(name=name, rm_dup=rm_dup, excludes=excludes)
     if train_ratio < 1:
         X, y, test_X, test_y = split_train_data(X, y, train_ratio=train_ratio)
     enlr = linear_model.MultiTaskElasticNetCV(cv=10, max_iter=1e3, tol=1e6, alphas=[0.01, 0.05, 0.1])
@@ -122,10 +123,13 @@ def test_enlrcv(name, rm_dup=True, train_ratio=1):
 
     coefs = pd.DataFrame(enlr.coef_.T, columns=y.columns, index=X.columns)
     coefs = coefs.abs()
-    coefs[coefs < 1e-4] = 0
+    coefs = coefs[(coefs >= 1e-6).all(axis=1)]
+    coefs = np.log10(coefs)
     coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
-    coefs = coefs.round(decimals=6)
-    coefs = coefs.sort_values(by=['AMP_IC50', 'CIP_IC50', 'GENT_IC50'], ascending=False)
+    coefs = coefs.mean(axis=1).rename('All_IC50')
+    coefs = coefs.round(decimals=2)
+    coefs = coefs.sort_values(ascending=False)
+    # coefs = coefs.sort_values(by=['AMP_IC50', 'CIP_IC50', 'GENT_IC50'], ascending=False)
     coefs.to_csv(f"output/{name}_lr_coefs.csv")
 
     predicted_y = enlr.predict(X)
@@ -138,8 +142,7 @@ def test_enlrcv(name, rm_dup=True, train_ratio=1):
 
 
 if __name__ == '__main__':
-    # test_enlrcv('yangs', False)
-    # test_enlrcv('yangs')
-    # test_enlrcv('ptfa', False)
-    # test_enlrcv('ptfa')
-    test_enlrcv('ptfa', train_ratio=0.9)
+    test_enlrcv(name='yangs', rm_dup=False, excludes=['galt', 'pser__L'])
+    test_enlrcv(name='ptfa', rm_dup=False)
+    test_enlrcv(name='ptfa', train_ratio=0.9)
+    test_enlrcv(name='ptfa')

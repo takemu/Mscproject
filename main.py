@@ -26,22 +26,22 @@ def split_csv(csv_file='data/perturbations.csv', slice_no=10):
             end = df.shape[0]
 
 
-def rename1():
-    df = pd.read_csv('data/perturbations.csv')
+def rename1(csv_file='data/perturbations.csv'):
+    df = pd.read_csv(csv_file)
     for i, row in df.iterrows():
         if isinstance(row['metabolite_1'], str) and row['metabolite_1'][0].isdigit():
             df.loc[i, 'metabolite_1'] = '_' + row['metabolite_1']
         if isinstance(row['metabolite_2'], str) and row['metabolite_2'][0].isdigit():
             df.loc[i, 'metabolite_2'] = '_' + row['metabolite_2']
     df = df.set_index('metabolite_1')
-    df.to_csv('data/perturbations2.csv')
+    df.to_csv(f'{csv_file[:-4]}_2.csv')
 
 
 if __name__ == '__main__':
     if sys.argv[1] == 'split':
         split_csv(slice_no=int(sys.argv[2]))
     elif sys.argv[1] == 'rename1':
-        rename1()
+        rename1(sys.argv[2])
     else:
         if sys.argv[1] == 'glc':
             etfl_model = ETFLModel(model_code='ecoli:iML1515', min_biomass=0.1)
