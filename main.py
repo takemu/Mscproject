@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 from os.path import exists, splitext, join
 
@@ -37,11 +38,26 @@ def rename1(csv_file='data/perturbations.csv'):
     df.to_csv(f'{csv_file[:-4]}_2.csv')
 
 
+def rename2(csv_file='output/etfl_fluxes.csv'):
+    df = pd.read_csv(csv_file, index_col=0)
+    for ind, row in df.iterrows():
+        if ind[0] == '_' and ind[1].isdigit():
+            df = df.rename(index={ind: ind[1:]})
+    for column in df.columns:
+        if column[0] == '_' and column[1].isdigit():
+            df = df.rename(columns={column: column[1:]})
+        if column[-1].isdigit() and column[-2] == '.':
+            df = df.rename(columns={column: column[:-2]})
+    df.to_csv(f'{csv_file[:-4]}_2.csv')
+
+
 if __name__ == '__main__':
     if sys.argv[1] == 'split':
         split_csv(slice_no=int(sys.argv[2]))
     elif sys.argv[1] == 'rename1':
-        rename1(sys.argv[2])
+        rename1()
+    elif sys.argv[1] == 'rename2':
+        rename2()
     else:
         if sys.argv[1] == 'glc':
             etfl_model = ETFLModel(model_code='ecoli:iML1515', min_biomass=0.1)

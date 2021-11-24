@@ -115,6 +115,7 @@ from mscproject.ml.data import load_train_data, show_result, split_train_data, i
 def test_enlrcv(name, rm_dup=True, excludes=iml1515_excluded_conditions, train_ratio=1):
     st = time.time()
     X, y = load_train_data(name=name, rm_dup=rm_dup, excludes=excludes)
+    print(X.shape)
     if train_ratio < 1:
         X, y, test_X, test_y = split_train_data(X, y, train_ratio=train_ratio)
     enlr = linear_model.MultiTaskElasticNetCV(cv=10, max_iter=1e3, tol=1e6, alphas=[0.01, 0.05, 0.1])
@@ -143,6 +144,6 @@ def test_enlrcv(name, rm_dup=True, excludes=iml1515_excluded_conditions, train_r
 
 if __name__ == '__main__':
     test_enlrcv(name='yangs', rm_dup=False, excludes=['galt', 'pser__L'])
-    test_enlrcv(name='ptfa', rm_dup=False)
-    test_enlrcv(name='ptfa', train_ratio=0.9)
-    test_enlrcv(name='ptfa')
+    test_enlrcv(name='etfl', rm_dup=False)
+    # test_enlrcv(name='etfl', train_ratio=0.9)
+    test_enlrcv(name='etfl')

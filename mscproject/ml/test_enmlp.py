@@ -62,6 +62,6 @@ def test_enmlpcv(name, rm_dup=True, excludes=iml1515_excluded_conditions, train_
 
 
 if __name__ == '__main__':
-    test_enmlpcv(name='yangs', rm_dup=False, excludes=['galt', 'pser__L'])
-    test_enmlpcv(name='ptfa', train_ratio=0.9)
-    test_enmlpcv(name='ptfa', times=10)
+    # test_enmlpcv(name='yangs', rm_dup=False, excludes=['galt', 'pser__L'])
+    # test_enmlpcv(name='etfl', train_ratio=0.9)
+    test_enmlpcv(name='etfl', times=1)
