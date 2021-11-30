@@ -80,7 +80,7 @@ class ElasticNetMLP(MLP):
     @property
     def weights(self):
         # return self.weights
-        return self._weights.detach().numpy()  # .T.tolist()
+        return self._weights.detach().numpy().tolist()[0]  # .T.tolist()
 
 
 class ElasticNetMLPCV():

@@ -115,23 +115,24 @@ from mscproject.ml.data import load_train_data, show_result, split_train_data, i
 def test_enlrcv(name, rm_dup=True, excludes=iml1515_excluded_conditions, train_ratio=1):
     st = time.time()
     X, y = load_train_data(name=name, rm_dup=rm_dup, excludes=excludes)
-    print(X.shape)
+    # print(X.shape)
     if train_ratio < 1:
         X, y, test_X, test_y = split_train_data(X, y, train_ratio=train_ratio)
     enlr = linear_model.MultiTaskElasticNetCV(cv=10, max_iter=1e3, tol=1e6, alphas=[0.01, 0.05, 0.1])
     enlr.fit(X, y)
     print(f"Training cost {time.time() - st:2f} seconds!")
 
-    coefs = pd.DataFrame(enlr.coef_.T, columns=y.columns, index=X.columns)
-    coefs = coefs.abs()
-    coefs = coefs[(coefs >= 1e-6).all(axis=1)]
-    coefs = np.log10(coefs)
-    coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
-    coefs = coefs.mean(axis=1).rename('All_IC50')
-    coefs = coefs.round(decimals=2)
-    coefs = coefs.sort_values(ascending=False)
-    # coefs = coefs.sort_values(by=['AMP_IC50', 'CIP_IC50', 'GENT_IC50'], ascending=False)
-    coefs.to_csv(f"output/{name}_lr_coefs.csv")
+    if train_ratio == 1:
+        coefs = pd.DataFrame(enlr.coef_.T, columns=y.columns, index=X.columns)
+        coefs = coefs.abs()
+        coefs = coefs[(coefs >= 1e-5).all(axis=1)]
+        coefs = np.log10(coefs)
+        coefs = coefs.mean(axis=1).rename('All_IC50')
+        coefs = (coefs - coefs.min()) / (coefs.max() - coefs.min()) * 100
+        coefs = coefs.round(decimals=1)
+        coefs = coefs.sort_values(ascending=False)
+        # coefs = coefs.sort_values(by=['AMP_IC50', 'CIP_IC50', 'GENT_IC50'], ascending=False)
+        coefs.to_csv(f"output/{name}_lr_coefs.csv")
 
     predicted_y = enlr.predict(X)
     show_result(y, predicted_y)
@@ -144,6 +145,6 @@ def test_enlrcv(name, rm_dup=True, excludes=iml1515_excluded_conditions, train_r
 
 if __name__ == '__main__':
     test_enlrcv(name='yangs', rm_dup=False, excludes=['galt', 'pser__L'])
-    test_enlrcv(name='etfl', rm_dup=False)
-    # test_enlrcv(name='etfl', train_ratio=0.9)
-    test_enlrcv(name='etfl')
+    # test_enlrcv(name='etfl', rm_dup=False)
+    test_enlrcv(name='etfl', train_ratio=0.9)
+    # test_enlrcv(name='etfl')

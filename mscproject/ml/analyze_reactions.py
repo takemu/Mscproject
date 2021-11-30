@@ -31,11 +31,11 @@ def analyze(name='ptfa_mlp', model='iML1515', threshold=0):
     results = results[~((results['kegg.reaction'] == '') | (results['biocyc'] == ''))].set_index('id')
     results = results[~results.index.duplicated()]
     results.to_csv(f'output/reactions/{name}_scores.csv')
-    results['kegg.reaction'].to_csv(f'output/reactions/{name}_keggtxt', sep=' ', index=False, header=False)
+    results['kegg.reaction'].to_csv(f'output/reactions/{name}_kegg.txt', sep=' ', index=False, header=False)
     results['biocyc'].to_csv(f'output/reactions/{name}_biocyc.txt', sep=' ', index=False, header=False)
 
 
 if __name__ == '__main__':
     analyze(name='yangs_lr', model='iJO1366')
-    analyze(name='etfl_lr')
+    # analyze(name='etfl_lr')
     analyze(name='etfl_mlp')
