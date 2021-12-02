@@ -1,0 +1,283 @@
+id,subsystem,kegg.reaction,biocyc,score
+ADSK,Cysteine Metabolism,R00509,ADENYLYLSULFKIN-RXN,84.7
+BPNT,Cysteine Metabolism,R00188,325-BISPHOSPHATE-NUCLEOTIDASE-RXN,82.6
+NDPK1,Nucleotide Salvage Pathway,R00330,GDPKIN-RXN,76.3
+CSND,Nucleotide Salvage Pathway,R00974,CYTDEAM-RXN,75.1
+ADK1,Nucleotide Salvage Pathway,R00127,ADENYL-KIN-RXN,71.2
+PFL,Pyruvate Metabolism,R00212,PYRUVFORMLY-RXN,65.3
+PGK,Glycolysis/Gluconeogenesis,R01512,PHOSGLYPHOS-RXN,61.0
+CBMD,Nucleotide Salvage Pathway,R07316,RXN0-5222,59.1
+PACCOAL,Alternate Carbon Metabolism,R02539,RXN-10819,58.7
+ALATA_L,Alanine and Aspartate Metabolism,R00258,ALANINE-AMINOTRANSFERASE-RXN,55.8
+CAT,Unassigned,R00009,CATAL-RXN,55.4
+LDH_D,Pyruvate Metabolism,R00704,DLACTDEHYDROGNAD-RXN,55.0
+SPODM,Unassigned,R00275,SUPEROX-DISMUT-RXN,54.4
+ASNNpp,Alanine and Aspartate Metabolism,R00485,ASPARAGHYD-RXN,50.9
+GLUNpp,Glutamate Metabolism,R00256,GLUTAMIN-RXN,50.7
+NDPK4,Nucleotide Salvage Pathway,R02093,DTDPKIN-RXN,50.3
+NTD7pp,Nucleotide Salvage Pathway,R00183,AMP-DEPHOSPHORYLATION-RXN,47.3
+TARTD,Alternate Carbon Metabolism,R00339,LTARTDEHYDRA-RXN,47.2
+RBP4E,Alternate Carbon Metabolism,R05850,RIBULPEPIM-RXN,46.7
+MSAR,Nucleotide Salvage Pathway,R09289,RXN-8974,45.4
+NTD2pp,Nucleotide Salvage Pathway,R00963,RXN-14025,44.2
+NTD9pp,Nucleotide Salvage Pathway,R01227,RXN-7609,43.5
+LSERDHr,Glycine and Serine Metabolism,R06126,RXN0-2201,42.5
+GLYAT,Glycine and Serine Metabolism,R00371,AKBLIG-RXN,42.3
+ADD,Nucleotide Salvage Pathway,R01244,ADENINE-DEAMINASE-RXN,42.2
+THRA,Threonine and Lysine Metabolism,R00751,THREONINE-ALDOLASE-RXN,41.6
+DDPGALA,Alternate Carbon Metabolism,R01064,DEHYDDEOXPHOSGALACT-ALDOL-RXN,41.5
+GND,Pentose Phosphate Pathway,R01528,RXN-9952,40.1
+XYLK,Alternate Carbon Metabolism,R01639,XYLULOKIN-RXN,38.6
+MAN6PI,Alternate Carbon Metabolism,R01819,MANNPISOM-RXN,38.6
+ACACCT,Alternate Carbon Metabolism,R01359,ACETOACETYL-COA-TRANSFER-RXN,38.2
+3AMACHYD,Nucleotide Salvage Pathway,R09983,RXN0-6452,37.9
+PYAM5PO,Cofactor and Prosthetic Group Biosynthesis,R00277,PMPOXI-RXN,37.2
+IPMD,Valine: Leucine: and Isoleucine Metabolism,R04426,3-ISOPROPYLMALDEHYDROG-RXN,37.1
+P5CD,Arginine and Proline Metabolism,R00707,PYRROLINECARBDEHYDROG-RXN,37.0
+PYNP2r,Nucleotide Salvage Pathway,R01876,URPHOS-RXN,37.0
+G1PPpp,Glycolysis/Gluconeogenesis,R00304,GLUCOSE-1-PHOSPHAT-RXN,36.7
+NTD4pp,Nucleotide Salvage Pathway,R00511,RXN-14026,36.6
+SUCOAS,Citric Acid Cycle,R00405,SUCCCOASYN-RXN,36.5
+ACALD,Pyruvate Metabolism,R00228,ACETALD-DEHYDROG-RXN,36.1
+ECOAH6,Membrane Lipid Metabolism,R04740,RXN-14273,36.0
+GUAD,Nucleotide Salvage Pathway,R01676,GUANINE-DEAMINASE-RXN,35.5
+NDPK3,Nucleotide Salvage Pathway,R00570,CDPKIN-RXN,35.1
+PPA,Anaplerotic Reactions,R00004,INORGPYROPHOSPHAT-RXN,34.3
+RPE,Pentose Phosphate Pathway,R01529,RIBULP3EPIM-RXN,34.2
+HACD2,Membrane Lipid Metabolism,R04748,RXN-12570,33.8
+ARGDC,Arginine and Proline Metabolism,R00566,ARGDECARBOX-RXN,33.5
+ASAD,Threonine and Lysine Metabolism,R02291,ASPARTATE-SEMIALDEHYDE-DEHYDROGENASE-RXN,33.4
+TMDK1,Nucleotide Salvage Pathway,R01567,THYKI-RXN,33.2
+X5PL3E,Alternate Carbon Metabolism,R03244,LXULRU5P-RXN,33.0
+VPAMTr,Valine: Leucine: and Isoleucine Metabolism,R01215,VALINE-PYRUVATE-AMINOTRANSFER-RXN,32.7
+TRE6PH,Alternate Carbon Metabolism,R06113,TRE6PHYDRO-RXN,32.4
+ACACT6r,Membrane Lipid Metabolism,R03858,RXN-14268,32.4
+PSP_Lpp,Glycine and Serine Metabolism,R00582,RXN0-5114,32.3
+ETHAAL,Cell Envelope Biosynthesis,R00749,ETHAMLY-RXN,32.2
+AIRC3,Purine and Pyrimidine Biosynthesis,R07405,RXN0-743,32.1
+TKT2,Pentose Phosphate Pathway,R01830,2TRANSKETO-RXN,31.9
+GNK,Alternate Carbon Metabolism,R01737,GLUCONOKIN-RXN,31.8
+HACD4,Membrane Lipid Metabolism,R04743,RXN-12490,31.5
+ARGSL,Arginine and Proline Metabolism,R01086,ARGSUCCINLYA-RXN,30.8
+MNNH,Alternate Carbon Metabolism,R05606,MANNONDEHYDRAT-RXN,30.8
+ASPTA,Alanine and Aspartate Metabolism,R00355,RXN-13697,30.6
+SULR,Cysteine Metabolism,R00858,SULFITE-REDUCT-RXN,30.6
+GLUR,Cell Envelope Biosynthesis,R00260,GLUTRACE-RXN,30.3
+ALAALAr,Cell Envelope Biosynthesis,R01150,DALADALALIG-RXN,30.3
+PYK,Glycolysis/Gluconeogenesis,R00200,PEPDEPHOS-RXN,30.2
+SERD_D,Glycine and Serine Metabolism,R00221,DSERDEAM-RXN,30.1
+PGMT,Alternate Carbon Metabolism,R08639,RXN-16999,30.0
+RNDR1,Nucleotide Salvage Pathway,R02017,ADPREDUCT-RXN,30.0
+DUTPDP,Nucleotide Salvage Pathway,R02100,DUTP-PYROP-RXN,29.8
+PUNP7,Nucleotide Salvage Pathway,R02297,XANTHOSINEPHOSPHORY-RXN,29.7
+ORNDC,Arginine and Proline Metabolism,R00670,ORNDECARBOX-RXN,29.5
+AGPR,Arginine and Proline Metabolism,R03443,N-ACETYLGLUTPREDUCT-RXN,29.4
+ATPM,Biomass and maintenance functions,R00086,ATPASE-RXN,29.2
+PRAIi,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R03509,PRAISOM-RXN,29.2
+ALATA_D2,Cofactor and Prosthetic Group Biosynthesis,R01147,RXN0-5240,29.0
+DDPA,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R01826,DAHPSYN-RXN,28.9
+URACPAH,Nucleotide Salvage Pathway,R09947,RXN0-6460,28.9
+INSK,Nucleotide Salvage Pathway,R01131,INOSINEKIN-RXN,28.8
+M1PD,Alternate Carbon Metabolism,R02703,MANNPDEHYDROG-RXN,28.7
+VALTA,Valine: Leucine: and Isoleucine Metabolism,R01214,BRANCHED-CHAINAMINOTRANSFERVAL-RXN,28.7
+PRASCSi,Purine and Pyrimidine Biosynthesis,R04591,SAICARSYN-RXN,28.1
+AMPTASECG,Cysteine Metabolism,R00899,RXN-6622,28.0
+THRS,Threonine and Lysine Metabolism,R01466,THRESYN-RXN,27.6
+RNDR3,Nucleotide Salvage Pathway,R02024,CDPREDUCT-RXN,27.5
+PAPSR,Cysteine Metabolism,R02021,1.8.4.8-RXN,27.3
+MALDDH,Alternate Carbon Metabolism,R00215,1.1.1.83-RXN,27.2
+IPPMIa,Valine: Leucine: and Isoleucine Metabolism,R04001,RXN-8991,27.0
+IG3PS,Histidine Metabolism,R04558,GLUTAMIDOTRANS-RXN,26.9
+UGLYCH,Nitrogen Metabolism,R00469,UREIDOGLYCOLATE-HYDROLASE-RXN,26.9
+PPNDH,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R01373,PREPHENATEDEHYDRAT-RXN,26.9
+GLUDy,Glutamate Metabolism,R00248,GLUTDEHYD-RXN,26.8
+SADH,Arginine and Proline Metabolism,R04189,SUCCARGDIHYDRO-RXN,26.6
+NADHPO,Unassigned,R00090,NADH-PEROXIDASE-RXN,26.6
+UAMAS,Cell Envelope Biosynthesis,R03193,UDP-NACMUR-ALA-LIG-RXN,26.4
+ASNS2,Alanine and Aspartate Metabolism,R00483,ASNSYNA-RXN,26.4
+IPPS,Valine: Leucine: and Isoleucine Metabolism,R01213,2-ISOPROPYLMALATESYN-RXN,26.3
+ATPPRT,Histidine Metabolism,R01071,ATPPHOSPHORIBOSYLTRANS-RXN,26.3
+GLCRD,Alternate Carbon Metabolism,R02752,GLUCARDEHYDRA-RXN,26.0
+SOTA,Arginine and Proline Metabolism,R04217,SUCCORNTRANSAM-RXN,26.0
+ACACT1r,Membrane Lipid Metabolism,R00238,ACETYL-COA-ACETYLTRANSFER-RXN,25.9
+HSST,Methionine Metabolism,R01777,HOMSUCTRAN-RXN,25.9
+DHAD2,Valine: Leucine: and Isoleucine Metabolism,R05070,DIHYDROXYMETVALDEHYDRAT-RXN,25.8
+ASPK,Threonine and Lysine Metabolism,R00480,ASPARTATEKIN-RXN,25.8
+AMANK,Alternate Carbon Metabolism,R02705,NANK-RXN,25.6
+SERD_L,Glycine and Serine Metabolism,R00220,4.3.1.17-RXN,25.4
+CS,Citric Acid Cycle,R00351,CITSYN-RXN,25.4
+USHD,Lipopolysaccharide Biosynthesis / Recycling,R04549,LIPIDXSYNTHESIS-RXN,25.2
+PGL,Pentose Phosphate Pathway,R02035,6PGLUCONOLACT-RXN,25.2
+ALTRH,Alternate Carbon Metabolism,R01540,ALTRODEHYDRAT-RXN,25.1
+ADSL1r,Purine and Pyrimidine Biosynthesis,R01083,AMPSYN-RXN,25.1
+IMPD,Purine and Pyrimidine Biosynthesis,R01130,IMP-DEHYDROG-RXN,25.1
+PRAMPC,Histidine Metabolism,R04037,HISTCYCLOHYD-RXN,25.0
+R15BPK,Alternate Carbon Metabolism,R06836,RXN0-1401,24.8
+THRD,Glycine and Serine Metabolism,R01465,THREODEHYD-RXN,24.6
+PUNP3,Nucleotide Salvage Pathway,R02147,RXN0-5199,24.6
+UAGCVT,Cell Envelope Biosynthesis,R00660,UDPNACETYLGLUCOSAMENOLPYRTRANS-RXN,24.6
+ACHBS,Valine: Leucine: and Isoleucine Metabolism,R08648,ACETOOHBUTSYN-RXN,24.6
+FCLPA,Alternate Carbon Metabolism,R02262,FUCPALDOL-RXN,24.3
+NDPK2,Nucleotide Salvage Pathway,R00156,UDPKIN-RXN,24.3
+CBMKr,Nitrogen Metabolism,R00150,CARBAMATE-KINASE-RXN,24.3
+DHAPT,Alternate Carbon Metabolism,R01012,2.7.1.121-RXN,24.3
+CYTK2,Nucleotide Salvage Pathway,R01665,RXN-7913,24.2
+GMPR,Purine and Pyrimidine Biosynthesis,R01134,GMP-REDUCT-RXN,24.2
+PSP_L,Glycine and Serine Metabolism,R00582,RXN0-5114,24.2
+TPI,Glycolysis/Gluconeogenesis,R01015,TRIOSEPISOMERIZATION-RXN,24.2
+UDPG4E,Alternate Carbon Metabolism,R00291,UDPGLUCEPIM-RXN,24.1
+GALKr,Alternate Carbon Metabolism,R01092,GALACTOKIN-RXN,24.0
+ACGS,Arginine and Proline Metabolism,R00259,N-ACETYLTRANSFER-RXN,24.0
+GLXCL,Glyoxylate Metabolism,R00013,GLYOCARBOLIG-RXN,24.0
+TYRTA,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R00734,TYROSINE-AMINOTRANSFERASE-RXN,23.9
+FUM,Citric Acid Cycle,R01082,FUMHYDR-RXN,23.8
+TDSK,Lipopolysaccharide Biosynthesis / Recycling,R04657,TETRAACYLDISACC4KIN-RXN,23.8
+GK1,Nucleotide Salvage Pathway,R00332,GUANYL-KIN-RXN,23.8
+SHKK,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R02412,SHIKIMATE-KINASE-RXN,23.3
+CYTDK2,Nucleotide Salvage Pathway,R00517,CYTIDINEKIN-RXN,23.3
+DDGLK,Alternate Carbon Metabolism,R01541,DEOXYGLUCONOKIN-RXN,23.3
+GALCTD,Alternate Carbon Metabolism,R05608,GALACTARDEHYDRA-RXN,23.2
+NDPK7,Nucleotide Salvage Pathway,R02326,DCDPKIN-RXN,23.2
+GLYCK2,Glycine and Serine Metabolism,R08572,GKI-RXN,22.9
+MOAT2,Lipopolysaccharide Biosynthesis / Recycling,R05074,KDOTRANS2-RXN,22.9
+DADA,Nucleotide Salvage Pathway,R02556,ADDALT-RXN,22.8
+GTHPi,Unassigned,R00274,GLUTATHIONE-PEROXIDASE-RXN,22.8
+DHAD1,Valine: Leucine: and Isoleucine Metabolism,R04441,DIHYDROXYISOVALDEHYDRAT-RXN,22.7
+NDPK8,Nucleotide Salvage Pathway,R01137,DADPKIN-RXN,22.7
+TRPS3,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R02340,RXN0-2381,22.7
+ME2,Anaplerotic Reactions,R00216,MALIC-NADP-RXN,22.4
+ACACT2r,Membrane Lipid Metabolism,R01177,RXN-12565,22.1
+CYSDS,Cysteine Metabolism,R00782,LCYSDESULF-RXN,22.0
+PTRCTA,Arginine and Proline Metabolism,R01155,PUTTRANSAM-RXN,22.0
+ASNS1,Alanine and Aspartate Metabolism,R00578,ASNSYNB-RXN,21.9
+GLCRAL,Alternate Carbon Metabolism,R02754,KDGALDOL-RXN,21.8
+AST,Arginine and Proline Metabolism,R00832,ARGININE-N-SUCCINYLTRANSFERASE-RXN,21.8
+PPND,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R01728,PREPHENATEDEHYDROG-RXN,21.8
+G6PDH2r,Pentose Phosphate Pathway,R00835,GLU6PDEHYDROG-RXN,21.7
+ANPRT,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R01073,PRTRANS-RXN,21.6
+GALCTND,Alternate Carbon Metabolism,R03033,GALACTONDEHYDRAT-RXN,21.6
+ADPT,Nucleotide Salvage Pathway,R00190,ADENPRIBOSYLTRAN-RXN,21.5
+ALAR,Alanine and Aspartate Metabolism,R00401,ALARACECAT-RXN,21.4
+ILETA,Valine: Leucine: and Isoleucine Metabolism,R02199,BRANCHED-CHAINAMINOTRANSFERILEU-RXN,21.3
+TRSARr,Alternate Carbon Metabolism,R01745,RXN0-5289,21.2
+ACLS,Valine: Leucine: and Isoleucine Metabolism,R00226,ACETOLACTSYN-RXN,21.1
+ORPT,Purine and Pyrimidine Biosynthesis,R01870,OROPRIBTRANS-RXN,20.9
+PGAMT,Cell Envelope Biosynthesis,R02060,5.4.2.10-RXN,20.8
+LPADSS,Lipopolysaccharide Biosynthesis / Recycling,R04606,LIPIDADISACCHARIDESYNTH-RXN,20.8
+ADSS,Purine and Pyrimidine Biosynthesis,R01135,ADENYLOSUCCINATE-SYNTHASE-RXN,20.8
+CYTK1,Nucleotide Salvage Pathway,R00512,RXN-11832,20.7
+UHGADA,Lipopolysaccharide Biosynthesis / Recycling,R04587,UDPACYLGLCNACDEACETYL-RXN,20.7
+MALS,Anaplerotic Reactions,R00472,MALSYN-RXN,20.6
+LEUTAi,Valine: Leucine: and Isoleucine Metabolism,R01090,BRANCHED-CHAINAMINOTRANSFERLEU-RXN,20.5
+GLYK,Alternate Carbon Metabolism,R00847,GLYCEROL-KIN-RXN,20.4
+GLUPRT,Purine and Pyrimidine Biosynthesis,R01072,PRPPAMIDOTRANS-RXN,20.2
+DURIPP,Nucleotide Salvage Pathway,R02484,URA-PHOSPH-RXN,19.6
+ACOTA,Arginine and Proline Metabolism,R02283,ACETYLORNTRANSAM-RXN,19.6
+HCO3E,Unassigned,R10092,RXN0-5224,19.6
+U23GAAT,Lipopolysaccharide Biosynthesis / Recycling,R04550,UDPHYDROXYMYRGLUCOSAMNACETYLTRANS-RXN,19.5
+XPPT,Nucleotide Salvage Pathway,R02142,XANPRIBOSYLTRAN-RXN,19.5
+GLU5K,Arginine and Proline Metabolism,R00239,GLUTKIN-RXN,19.3
+DTMPK,Nucleotide Salvage Pathway,R02094,DTMPKI-RXN,19.1
+ACKr,Pyruvate Metabolism,R00315,ACETATEKIN-RXN,19.0
+ALLULPE,Alternate Carbon Metabolism,R09031,RXN0-304,18.9
+AMANAPEr,Alternate Carbon Metabolism,R02087,NANE-RXN,18.8
+OAADC,Pyruvate Metabolism,R00217,OXALODECARB-RXN,18.7
+NTD2,Nucleotide Salvage Pathway,R00963,RXN-14025,18.7
+DRPA,Alternate Carbon Metabolism,R01066,DEOXYRIBOSE-P-ALD-RXN,18.6
+OXAMTC,Nitrogen Metabolism,R02937,OXAMATE-CARBAMOYLTRANSFERASE-RXN,18.5
+NTD3,Nucleotide Salvage Pathway,R01664,RXN0-5292,18.2
+URIK1,Nucleotide Salvage Pathway,R00964,URIDINEKIN-RXN,18.2
+TAGURr,Alternate Carbon Metabolism,R02555,ALTRO-OXIDOREDUCT-RXN,18.0
+OMPDC,Purine and Pyrimidine Biosynthesis,R00965,OROTPDECARB-RXN,17.9
+HADPCOADH3,Alternate Carbon Metabolism,R06941,RXN0-2044,17.9
+DHQS,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R03083,3-DEHYDROQUINATE-SYNTHASE-RXN,17.8
+NTD5pp,Nucleotide Salvage Pathway,R01569,THYMIDYLATE-5-PHOSPHATASE-RXN,17.7
+PGM,Glycolysis/Gluconeogenesis,R01518,3PGAREARR-RXN,17.6
+PFK_2,Alternate Carbon Metabolism,R03236,TAGAKIN-RXN,17.6
+HSTPT,Histidine Metabolism,R03243,HISTAMINOTRANS-RXN,17.5
+GTHOr,Cofactor and Prosthetic Group Biosynthesis,R00115,GLUTATHIONE-REDUCT-NADPH-RXN,17.1
+DDGALK,Alternate Carbon Metabolism,R03387,DEHYDDEOXGALACTKIN-RXN,17.0
+KARA1,Valine: Leucine: and Isoleucine Metabolism,R04439,ACETOLACTREDUCTOISOM-RXN,17.0
+ASPT,Alanine and Aspartate Metabolism,R00490,ASPARTASE-RXN,16.6
+SERAT,Cysteine Metabolism,R00586,SERINE-O-ACETTRAN-RXN,16.5
+MANAO,Alternate Carbon Metabolism,R02454,MANNONOXIDOREDUCT-RXN,16.3
+DURIK1,Nucleotide Salvage Pathway,R02099,DURIDKI-RXN,16.3
+GTHRDHpp,Cofactor and Prosthetic Group Biosynthesis,R00494,RXN-12618,16.2
+ADSL2r,Purine and Pyrimidine Biosynthesis,R04559,AICARSYN-RXN,16.0
+TALA,Pentose Phosphate Pathway,R01827,TRANSALDOL-RXN,15.6
+LCADi,Alternate Carbon Metabolism,R01446,LACTALDDEHYDROG-RXN,15.5
+ACONTa,Citric Acid Cycle,R01325,ACONITATEDEHYDR-RXN,15.3
+ECOAH1,Membrane Lipid Metabolism,R03026,RXN-11667,15.1
+UAMAGS,Cell Envelope Biosynthesis,R02783,UDP-NACMURALA-GLU-LIG-RXN,14.9
+DGK1,Nucleotide Salvage Pathway,R02090,GMKALT-RXN,14.5
+SDPDS,Threonine and Lysine Metabolism,R02734,SUCCDIAMINOPIMDESUCC-RXN,14.4
+UGLT,Alternate Carbon Metabolism,R00955,GALACTURIDYLYLTRANS-RXN,14.4
+HACD1,Membrane Lipid Metabolism,R01975,RXN-11662,14.1
+PYK3,Nucleotide Salvage Pathway,R00430,RXN-14117,14.0
+ENO,Glycolysis/Gluconeogenesis,R00658,2PGADEHYDRAT-RXN,13.7
+XYLI1,Alternate Carbon Metabolism,R01432,XYLISOM-RXN,13.2
+IGPDH,Histidine Metabolism,R03457,IMIDPHOSDEHYD-RXN,13.1
+FCLK,Alternate Carbon Metabolism,R03241,FUCULOKIN-RXN,13.1
+UAGAAT,Lipopolysaccharide Biosynthesis / Recycling,R04567,UDPNACETYLGLUCOSAMACYLTRANS-RXN,13.0
+XYLI2,Alternate Carbon Metabolism,R00307,GLUCISOM-RXN,12.8
+PRMICI,Histidine Metabolism,R04640,PRIBFAICARPISOM-RXN,12.8
+SGSAD,Arginine and Proline Metabolism,R05049,SUCCGLUALDDEHYD-RXN,12.6
+AKGDH,Citric Acid Cycle,R08549,2OXOGLUTARATEDEH-RXN,12.4
+ANS,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R00986,ANTHRANSYN-RXN,12.1
+SHSL1,Methionine Metabolism,R03260,O-SUCCHOMOSERLYASE-RXN,12.0
+CYSS,Cysteine Metabolism,R00897,ACSERLY-RXN,12.0
+URDGLYCD,Alternate Carbon Metabolism,R02935,RXN0-7024,12.0
+A5PISO,Alternate Carbon Metabolism,R01530,DARAB5PISOM-RXN,11.9
+CYTDK1,Nucleotide Salvage Pathway,R00513,CYTIKIN-RXN,11.8
+NDPK5,Nucleotide Salvage Pathway,R01857,DGDPKIN-RXN,11.7
+HISTP,Histidine Metabolism,R03013,HISTIDPHOS-RXN,11.5
+OCBT,Arginine and Proline Metabolism,R01398,RXN-13482,11.4
+PRAGSr,Purine and Pyrimidine Biosynthesis,R04144,GLYRIBONUCSYN-RXN,11.2
+EDA,Pentose Phosphate Pathway,R05605,KDPGALDOL-RXN,11.1
+ASPCT,Purine and Pyrimidine Biosynthesis,R01397,ASPCARBTRANS-RXN,11.0
+3OAR140,Cell Envelope Biosynthesis,R04566,RXN-9536,10.6
+ABTA,Arginine and Proline Metabolism,R01648,GABATRANSAM-RXN,10.5
+OMCDC,Valine: Leucine: and Isoleucine Metabolism,R01652,RXN-7800,10.4
+RMPA,Alternate Carbon Metabolism,R02263,RHAMNULPALDOL-RXN,9.9
+MCOATA,Membrane Lipid Metabolism,R01626,MALONYL-COA-ACP-TRANSACYL-RXN,9.7
+ACACT4r,Membrane Lipid Metabolism,R03778,RXN-13617,9.7
+FACOAE160,Cell Envelope Biosynthesis,R01274,PALMITOYL-COA-HYDROLASE-RXN,9.4
+RNDR2,Nucleotide Salvage Pathway,R02019,GDPREDUCT-RXN,9.4
+GSNK,Nucleotide Salvage Pathway,R01228,GUANOSINEKIN-RXN,9.1
+AGMT,Arginine and Proline Metabolism,R01157,AGMATIN-RXN,8.9
+ALDD19xr,Alternate Carbon Metabolism,R02536,PHENDEHYD-RXN,8.9
+ECOAH2,Membrane Lipid Metabolism,R04749,RXN-12567,8.4
+G5SD,Arginine and Proline Metabolism,R03313,GLUTSEMIALDEHYDROG-RXN,8.2
+PUNP6,Nucleotide Salvage Pathway,R02748,DEOXYINOPHOSPHOR-RXN,8.2
+HSK,Threonine and Lysine Metabolism,R01771,HOMOSERKIN-RXN,8.0
+TRPS2,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R00674,RXN0-2382,7.9
+PSERT,Glycine and Serine Metabolism,R04173,PSERTRANSAM-RXN,7.2
+HEX1,Glycolysis/Gluconeogenesis,R00299,GLUCOKIN-RXN,6.9
+TRPAS2,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R00673,TRYPTOPHAN-RXN,6.1
+PUNP2,Nucleotide Salvage Pathway,R02557,DEOXYADENPHOSPHOR-RXN,5.9
+PGCD,Glycine and Serine Metabolism,R01513,PGLYCDEHYDROG-RXN,5.5
+IPPMIb,Valine: Leucine: and Isoleucine Metabolism,R03968,3-ISOPROPYLMALISOM-RXN,5.5
+PRATPP,Histidine Metabolism,R04035,HISTPRATPHYD-RXN,5.5
+UAGPT3,Cell Envelope Biosynthesis,R05032,NACGLCTRANS-RXN,5.4
+GAPD,Glycolysis/Gluconeogenesis,R01061,GAPOXNPHOSPHN-RXN,5.3
+HISTD,Histidine Metabolism,R01158,RXN-8001,5.0
+PDH,Glycolysis/Gluconeogenesis,R00209,PYRUVDEH-RXN,4.4
+DAPDC,Threonine and Lysine Metabolism,R00451,DIAMINOPIMDECARB-RXN,3.9
+PPM2,Alternate Carbon Metabolism,R02749,D-PPENTOMUT-RXN,3.7
+TGBPA,Alternate Carbon Metabolism,R01069,TAGAALDOL-RXN,3.6
+DAPE,Threonine and Lysine Metabolism,R02735,DIAMINOPIMEPIM-RXN,3.5
+HACD7,Membrane Lipid Metabolism,R04737,RXN-14271,3.3
+CHORS,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R01714,CHORISMATE-SYNTHASE-RXN,2.8
+SSALy,Arginine and Proline Metabolism,R00714,SUCCSEMIALDDEHYDROG-RXN,2.7
+ECOAH7,Membrane Lipid Metabolism,R04738,RXN-14272,2.5
+DHORTS,Purine and Pyrimidine Biosynthesis,R01993,DIHYDROOROT-RXN,2.0
+NTD8,Nucleotide Salvage Pathway,R01968,RXN-14142,1.8
+HXAND,Nucleotide Salvage Pathway,R01768,RXN-7682,1.7
+CYTD,Nucleotide Salvage Pathway,R01878,CYTIDEAM2-RXN,1.5
+PHETA1,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R00694,PHEAMINOTRANS-RXN,1.5
+PTAr,Pyruvate Metabolism,R00230,PHOSACETYLTRANS-RXN,1.5
+XAND,Nucleotide Salvage Pathway,R02103,RXN0-901,1.0
+DCYTD,Nucleotide Salvage Pathway,R02485,CYTIDEAM-RXN,0.6
+PSCVT,Tyrosine: Tryptophan: and Phenylalanine Metabolism,R03460,2.5.1.19-RXN,0.4
+ACACT7r,Membrane Lipid Metabolism,R03991,2.3.1.155-RXN,0.1
+URIK2,Nucleotide Salvage Pathway,R00968,URKI-RXN,0.0

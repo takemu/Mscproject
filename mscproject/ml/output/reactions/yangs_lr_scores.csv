@@ -1,0 +1,34 @@
+id,subsystem,kegg.reaction,biocyc,score
+ADD,Nucleotide Salvage Pathway,R01244,ADENINE-DEAMINASE-RXN,100.0
+ACACCT,Alternate Carbon Metabolism,R01359,ACETOACETYL-COA-TRANSFER-RXN,98.9
+3NTD9pp,Nucleotide Salvage Pathway,R02148,RXN-14124,94.2
+ADA,Nucleotide Salvage Pathway,R01560,ADENODEAMIN-RXN,91.1
+ABUTD,Arginine and Proline Metabolism,R02549,AMINOBUTDEHYDROG-RXN,87.0
+CYSDS,Cysteine Metabolism,R00782,LCYSDESULF-RXN,81.8
+DDGLK,Alternate Carbon Metabolism,R01541,DEOXYGLUCONOKIN-RXN,78.4
+ACKr,Pyruvate Metabolism,R00315,ACETATEKIN-RXN,76.8
+FUM,Citric Acid Cycle,R01082,FUMHYDR-RXN,73.0
+CYTD,Nucleotide Salvage Pathway,R01878,CYTIDEAM2-RXN,72.6
+ABTA,Arginine and Proline Metabolism,R01648,GABATRANSAM-RXN,71.1
+CS,Citric Acid Cycle,R00351,CITSYN-RXN,68.1
+AMPTASECG,Cysteine Metabolism,R00899,RXN-6622,66.6
+G6PDH2r,Pentose Phosphate Pathway,R00835,GLU6PDEHYDROG-RXN,64.8
+3NTD7pp,Nucleotide Salvage Pathway,R01562,RXN-14126,63.7
+ALATA_L,Alanine and Aspartate Metabolism,R00258,ALANINE-AMINOTRANSFERASE-RXN,61.5
+MDH,Citric Acid Cycle,R00342,MALATE-DEH-RXN,58.3
+3NTD4pp,Nucleotide Salvage Pathway,R02370,RXN-14090,55.4
+3NTD2pp,Nucleotide Salvage Pathway,R01877,RXN-14115,53.7
+TPI,Glycolysis/Gluconeogenesis,R01015,TRIOSEPISOMERIZATION-RXN,50.9
+GLUDy,Glutamate Metabolism,R00248,GLUTDEHYD-RXN,50.5
+23PDE9pp,Nucleotide Salvage Pathway,R05135,RXN-14064,47.6
+PTAr,Pyruvate Metabolism,R00230,PHOSACETYLTRANS-RXN,45.5
+GND,Pentose Phosphate Pathway,R01528,RXN-9952,45.2
+AKGDH,Citric Acid Cycle,R08549,2OXOGLUTARATEDEH-RXN,41.9
+CITL,Citric Acid Cycle,R00362,CITLY-RXN,39.8
+ME2,Anaplerotic Reactions,R00216,MALIC-NADP-RXN,36.3
+EDA,Pentose Phosphate Pathway,R05605,KDPGALDOL-RXN,35.0
+PGK,Glycolysis/Gluconeogenesis,R01512,PHOSGLYPHOS-RXN,34.8
+PFL,Pyruvate Metabolism,R00212,PYRUVFORMLY-RXN,30.0
+ENO,Glycolysis/Gluconeogenesis,R00658,2PGADEHYDRAT-RXN,23.6
+DHAPT,Alternate Carbon Metabolism,R01012,2.7.1.121-RXN,23.0
+GAPD,Glycolysis/Gluconeogenesis,R01061,GAPOXNPHOSPHN-RXN,22.5
